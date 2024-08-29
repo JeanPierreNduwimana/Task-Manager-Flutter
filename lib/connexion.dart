@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 
@@ -42,7 +43,17 @@ class Connexion extends StatelessWidget {
                 ),
                 ElevatedButton(
                   child: const Text('Accueil'),
-                  onPressed: () {Navigator.pushNamed(context, '/accueil');},
+                  onPressed: () async {
+                    //Navigator.pushNamed(context, '/accueil');
+                    try {
+                      var response = await Dio().get('https://fourn6-mobile-prof.onrender.com/exos/long/double/5');
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('La response est: $response')));
+                      print( 'La response est: $response');
+                    } catch(e) {
+                      print(e);
+                    }
+                    },
                 )
               ],
             ),
@@ -50,4 +61,6 @@ class Connexion extends StatelessWidget {
       ),
     );
   }
+
+
 }
