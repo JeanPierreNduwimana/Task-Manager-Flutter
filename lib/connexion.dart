@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:tp1_flutter/lib_http.dart';
+import 'package:tp1_flutter/transfer.dart';
 
 
 class Connexion extends StatelessWidget {
@@ -45,14 +47,26 @@ class Connexion extends StatelessWidget {
                   child: const Text('Accueil'),
                   onPressed: () async {
                     //Navigator.pushNamed(context, '/accueil');
-                    try {
-                      var response = await Dio().get('https://fourn6-mobile-prof.onrender.com/exos/long/double/5');
+                    /*try {
+                      var response = await Dio().get('http://localhost:8080/api/id/signup');
                       ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text('La response est: $response')));
                       print( 'La response est: $response');
+
+                      //User user = new User();
+
                     } catch(e) {
                       print(e);
-                    }
+                    }*/
+
+                    SignUpRequest req = SignUpRequest();
+                    req.username = username_controller.text;
+                    req.password = password_controller.text;
+
+                    var response = await signup(req);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('La response est: $response')));
+                    print( 'La response est: $response');
                     },
                 )
               ],
