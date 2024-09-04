@@ -45,3 +45,13 @@ Future<void> deconnexion() async {
     throw(e);
   }
 }
+
+Future<List<HomeitemResponse>> getHomeItemResponse() async {
+  try {
+    var response = await SingletonDio.getDio().get('http://10.10.39.139:8080/api/home');
+    return List<HomeitemResponse>.from(response.data);
+  } catch(e) {
+    print(e);
+    throw(e);
+  }
+}
