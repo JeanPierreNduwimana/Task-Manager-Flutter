@@ -1,4 +1,7 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:tp1_flutter/lib_http.dart';
+import 'package:tp1_flutter/transfer.dart';
 
 
 class Connexion extends StatelessWidget {
@@ -42,12 +45,33 @@ class Connexion extends StatelessWidget {
                 ),
                 ElevatedButton(
                   child: const Text('Accueil'),
-                  onPressed: () {Navigator.pushNamed(context, '/accueil');},
+                  onPressed: () async {
+                      connexion(username_controller.text, password_controller.text, context); //HTTP REQUEST
+                    },
                 )
               ],
             ),
           )
       ),
     );
+
+
   }
+
+  void connexion(String username, String password, BuildContext context) async{
+    SignInRequest req = SignInRequest();
+    req.username = username;
+    req.password = password;
+
+    var response = await signin(req);
+
+    String name = response.username;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('La response est: $name')));
+    print( 'La response est: $response');
+    Navigator.pushNamed(context, '/accueil');
+  }
+
+
 }

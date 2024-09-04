@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:tp1_flutter/transfer.dart';
+
+import 'lib_http.dart';
 
 
 class Inscription extends StatelessWidget {
@@ -57,13 +60,37 @@ class Inscription extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               ElevatedButton(
+                child: const Text('Inscription'),
+                onPressed: () {
+                  //Navigator.pushNamed(context, '/connexion');
+                  inscription(username_controller.text, password_controller.text, confirm_password_controller.text, context); //HTTP REQUEST
+
+                  },
+              ),
+              ElevatedButton(
                 child: const Text('Connexion'),
-                onPressed: () {Navigator.pushNamed(context, '/connexion');},
+                onPressed: () async{
+                  Navigator.pushNamed(context, '/connexion');
+                },
               )
             ],
           ),
         )
       ),
       );
+  }
+
+  void inscription(String username, String password,String confirmpassword, BuildContext context) async{
+    SignUpRequest req = SignUpRequest();
+    req.username = username;
+    req.password = password;
+
+    var response = await signup(req);
+
+    String name = response.username;
+
+    Navigator.pushNamed(context, '/accueil');
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('username: $name')));
   }
 }
