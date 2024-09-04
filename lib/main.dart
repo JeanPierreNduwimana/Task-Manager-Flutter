@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
 
-      home: const Inscription(),
+      home: const Connexion(),
 
       routes: {
         '/inscription': (context) => const Inscription(),

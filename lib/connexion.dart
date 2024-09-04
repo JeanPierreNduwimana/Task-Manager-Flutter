@@ -46,27 +46,7 @@ class Connexion extends StatelessWidget {
                 ElevatedButton(
                   child: const Text('Accueil'),
                   onPressed: () async {
-                    //Navigator.pushNamed(context, '/accueil');
-                    /*try {
-                      var response = await Dio().get('http://localhost:8080/api/id/signup');
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('La response est: $response')));
-                      print( 'La response est: $response');
-
-                      //User user = new User();
-
-                    } catch(e) {
-                      print(e);
-                    }*/
-
-                    SignUpRequest req = SignUpRequest();
-                    req.username = username_controller.text;
-                    req.password = password_controller.text;
-
-                    var response = await signup(req);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('La response est: $response')));
-                    print( 'La response est: $response');
+                      connexion(username_controller.text, password_controller.text, context); //HTTP REQUEST
                     },
                 )
               ],
@@ -74,6 +54,23 @@ class Connexion extends StatelessWidget {
           )
       ),
     );
+
+
+  }
+
+  void connexion(String username, String password, BuildContext context) async{
+    SignInRequest req = SignInRequest();
+    req.username = username;
+    req.password = password;
+
+    var response = await signin(req);
+
+    String name = response.username;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('La response est: $name')));
+    print( 'La response est: $response');
+    Navigator.pushNamed(context, '/accueil');
   }
 
 

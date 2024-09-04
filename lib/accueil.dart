@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tp1_flutter/lib_http.dart';
 
 
 class Accueil extends StatelessWidget {
@@ -20,8 +21,14 @@ class Accueil extends StatelessWidget {
             children: [
               const Text('Ceci est la page d\' accueil'),
               ElevatedButton(
-                child: const Text('Inscription'),
-                onPressed: () {Navigator.pushNamed(context, '/inscription');},
+                child: const Text('Deconnecter'),
+                onPressed: () async{
+                  await deconnexion();
+                  Navigator.pushNamed(context, '/inscription');
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Vous êtes déconnecté')));
+
+                  },
               )
             ],
           )

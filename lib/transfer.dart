@@ -1,12 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
-/// This allows the `User` class to access private members in
-/// the generated file. The value for this is *.g.dart, where
-/// the star denotes the source file name.
 part 'transfer.g.dart';
 
-/// An annotation for the code generator to know that this class needs the
-/// JSON serialization logic to be generated.
 @JsonSerializable()
 class SignUpRequest {
 
@@ -28,4 +23,27 @@ class SignUpResponse {
 
   factory SignUpResponse.fromJson(Map<String, dynamic> json) => _$SignUpResponseFromJson(json);
   Map<String, dynamic> toJson() => _$SignUpResponseToJson(this);
+}
+
+@JsonSerializable()
+class SignInRequest {
+
+  SignInRequest();
+
+  String username = '';
+  String password = '';
+
+  factory SignInRequest.fromJson(Map<String, dynamic> json) => _$SignInRequestFromJson(json);
+  Map<String, dynamic> toJson() => _$SignInRequestToJson(this);
+}
+
+@JsonSerializable()
+class SignInResponse {
+
+  SignInResponse();
+
+  String username = '';
+
+  factory SignInResponse.fromJson(Map<String, dynamic> json) => _$SignInResponseFromJson(json);
+  Map<String, dynamic> toJson() => _$SignInResponseToJson(this);
 }
