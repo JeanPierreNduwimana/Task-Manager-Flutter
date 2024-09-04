@@ -10,7 +10,6 @@ class Accueil extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return Scaffold(
-
       appBar: AppBar(
         title: const Text('Accueil'),
         backgroundColor: Colors.deepPurple,
@@ -35,4 +34,5 @@ class Accueil extends StatelessWidget {
       ),
     );
   }
+
 }

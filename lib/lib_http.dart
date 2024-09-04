@@ -1,9 +1,23 @@
 import 'package:dio/dio.dart';
+import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:tp1_flutter/transfer.dart';
+import 'package:cookie_jar/cookie_jar.dart';
+
+class SingletonDio {
+
+  static var cookiemanager = CookieManager(CookieJar());
+
+  static Dio getDio(){
+    Dio dio = Dio();
+    dio.interceptors.add(cookiemanager);
+    return dio;
+}
+}
+
 
 Future<SignUpResponse> signup(SignUpRequest req) async {
   try {
-    var response = await Dio().post('http://10.10.39.139:8080/api/id/signup', data: req.toJson());
+    var response = await SingletonDio.getDio().post('http://10.10.39.139:8080/api/id/signup', data: req.toJson());
     print(response);
     return SignUpResponse.fromJson(response.data);
   } catch(e) {
@@ -14,7 +28,7 @@ Future<SignUpResponse> signup(SignUpRequest req) async {
 
 Future<SignInResponse> signin(SignInRequest req) async {
   try {
-    var response = await Dio().post('http://10.10.39.139:8080/api/id/signin', data: req.toJson());
+    var response = await SingletonDio.getDio().post('http://10.10.39.139:8080/api/id/signin', data: req.toJson());
     print(response);
     return SignInResponse.fromJson(response.data);
   } catch(e) {
@@ -25,7 +39,7 @@ Future<SignInResponse> signin(SignInRequest req) async {
 
 Future<void> deconnexion() async {
   try {
-    await Dio().post('http://10.10.39.139:8080/api/id/signout');
+    await SingletonDio.getDio().post('http://10.10.39.139:8080/api/id/signout');
   } catch(e) {
     print(e);
     throw(e);

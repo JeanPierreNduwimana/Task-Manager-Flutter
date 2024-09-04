@@ -59,20 +59,26 @@ class Inscription extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
-              ElevatedButton(
-                child: const Text('Inscription'),
-                onPressed: () {
-                  //Navigator.pushNamed(context, '/connexion');
-                  inscription(username_controller.text, password_controller.text, confirm_password_controller.text, context); //HTTP REQUEST
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton(
+                    child: const Text('Connexion'),
+                    onPressed: () async{
+                      Navigator.pushNamed(context, '/connexion');
+                    },
+                  ),
+                  ElevatedButton(
+                    child: const Text('Inscription'),
+                    onPressed: () {
+                      //Navigator.pushNamed(context, '/connexion');
+                      inscription(username_controller.text, password_controller.text, confirm_password_controller.text, context); //HTTP REQUEST
 
-                  },
-              ),
-              ElevatedButton(
-                child: const Text('Connexion'),
-                onPressed: () async{
-                  Navigator.pushNamed(context, '/connexion');
-                },
+                    },
+                  )
+                ],
               )
+
             ],
           ),
         )

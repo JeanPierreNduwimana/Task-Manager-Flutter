@@ -43,12 +43,24 @@ class Connexion extends StatelessWidget {
                       hintStyle: TextStyle(color: Colors.black38)
                   ),
                 ),
-                ElevatedButton(
-                  child: const Text('Accueil'),
-                  onPressed: () async {
-                      connexion(username_controller.text, password_controller.text, context); //HTTP REQUEST
-                    },
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ElevatedButton(
+                      child: const Text('Inscription'),
+                      onPressed: () async {
+                        Navigator.pushNamed(context, '/inscription');                  },
+                    ),
+                    ElevatedButton(
+                      child: const Text('Connexion'),
+                      onPressed: () async {
+                        connexion(username_controller.text, password_controller.text, context); //HTTP REQUEST
+                      },
+                    )
+                  ],
                 )
+
               ],
             ),
           )
@@ -67,10 +79,12 @@ class Connexion extends StatelessWidget {
 
     String name = response.username;
 
+    Navigator.pushReplacementNamed(context, '/accueil');
+
     ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('La response est: $name')));
-    print( 'La response est: $response');
-    Navigator.pushNamed(context, '/accueil');
+
+
   }
 
 
