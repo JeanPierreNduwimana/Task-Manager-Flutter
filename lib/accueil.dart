@@ -1,4 +1,3 @@
-/*
 import 'package:flutter/material.dart';
 import 'package:tp1_flutter/lib_http.dart';
 import 'package:tp1_flutter/transfer.dart';
@@ -10,14 +9,12 @@ class Accueil extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    List<HomeitemResponse> taches = await getListTaches();
+    //List<HomeitemResponse> taches = await getListTaches();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Accueil'),
         backgroundColor: Colors.deepPurple,
       ),
-
-     */
 /* body: Center(
           child: Column(
             children: [
@@ -35,32 +32,48 @@ class Accueil extends StatelessWidget {
             ],
           )
       ),*/
-/*
 
-      body: ListView.builder(
 
-          itemCount: taches.length,
-          itemBuilder: (BuildContext context, int index){
-            final tache = taches[index];
-          return ListTile(
-            title: Text(tache.name),
+    body: FutureBuilder<List<HomeItemResponse>>(
+      future: getListTaches(),
+      builder: (BuildContext context, AsyncSnapshot<List<HomeItemResponse>> snapshot){
+        if (snapshot.hasError) {
+          return Center(child: Text('Erreur : ${snapshot.error}'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Center(child: Text('Aucune tâche disponible'));
+        } else {
+          List<HomeItemResponse> taches = snapshot.data!;
+          return ListView.builder(
+              itemBuilder: (BuildContext context, int index ){
+                if(index < taches.length){
+                  final tache = taches[index];
+                  return ListTile(
+                    title: Text(tache.name),
+                  );
+                }
+                return null;
+              }
           );
-      })
+        }
+
+    }
+    ),
+
     );
   }
   
-  Future<List<HomeitemResponse>> getListTaches() async{
-
-    var response = await getListTaches();
-    return response;
+  Future<List<HomeItemResponse>> getListTaches() async{
+    return await getHomeItemResponse();
   }
 
-}*/
+}
 
 //chat gpt code //
+
+/*
 import 'package:flutter/material.dart';
-import 'package:tp1_flutter/lib_http.dart';
 import 'package:tp1_flutter/transfer.dart';
+import 'lib_http.dart';
 
 class Accueil extends StatelessWidget {
   const Accueil({super.key});
@@ -99,6 +112,6 @@ class Accueil extends StatelessWidget {
   }
 
   Future<List<HomeitemResponse>> _fetchTaches() async {
-    return await getListTaches(); // Assurez-vous que cette méthode est correctement définie dans votre lib_http.dart
+    return await getHomeItemResponse(); // Assurez-vous que cette méthode est correctement définie dans votre lib_http.dart
   }
-}
+}*/

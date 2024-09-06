@@ -17,7 +17,7 @@ class SingletonDio {
 
 Future<SignUpResponse> signup(SignUpRequest req) async {
   try {
-    var response = await SingletonDio.getDio().post('http://10.10.39.139:8080/api/id/signup', data: req.toJson());
+    var response = await SingletonDio.getDio().post('http://192.168.221.1:8080/api/id/signup', data: req.toJson());
     print(response);
     return SignUpResponse.fromJson(response.data);
   } catch(e) {
@@ -28,7 +28,7 @@ Future<SignUpResponse> signup(SignUpRequest req) async {
 
 Future<SignInResponse> signin(SignInRequest req) async {
   try {
-    var response = await SingletonDio.getDio().post('http://10.10.39.139:8080/api/id/signin', data: req.toJson());
+    var response = await SingletonDio.getDio().post('http://192.168.221.1:8080/api/id/signin', data: req.toJson());
     print(response);
     return SignInResponse.fromJson(response.data);
   } catch(e) {
@@ -39,17 +39,25 @@ Future<SignInResponse> signin(SignInRequest req) async {
 
 Future<void> deconnexion() async {
   try {
-    await SingletonDio.getDio().post('http://10.10.39.139:8080/api/id/signout');
+    await SingletonDio.getDio().post('http://192.168.221.1:8080/api/id/signout');
   } catch(e) {
     print(e);
     throw(e);
   }
 }
 
-Future<List<HomeitemResponse>> getHomeItemResponse() async {
+Future<List<HomeItemResponse>> getHomeItemResponse() async {
   try {
-    var response = await SingletonDio.getDio().get('http://10.10.39.139:8080/api/home');
-    return List<HomeitemResponse>.from(response.data);
+    var response = await SingletonDio.getDio().get('http://192.168.221.1:8080/api/home');
+
+    var listeJSON = response.data as List;
+
+    var listetaches = listeJSON.map((elementJSON) {
+      return HomeItemResponse.fromJson(elementJSON);
+    }).toList();
+
+    return listetaches;
+
   } catch(e) {
     print(e);
     throw(e);

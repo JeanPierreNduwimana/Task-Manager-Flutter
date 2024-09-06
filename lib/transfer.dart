@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:json_annotation/json_annotation.dart';
 
 part 'transfer.g.dart';
@@ -49,16 +51,15 @@ class SignInResponse {
 }
 
 @JsonSerializable()
-class HomeitemResponse {
+class HomeItemResponse {
+  HomeItemResponse();
 
-  HomeitemResponse();
-
-  String id = '';
+  int id = 0;
   String name = '';
-  String percentageDone = '';
-  String percentageTimeSpent = '';
+  int percentageDone = 0;
+  int percentageTimeSpent = 0;
   String deadline = '';
 
-  factory HomeitemResponse.fromJson(Map<String, dynamic> json) => _$HomeitemResponseFromJson(json);
-  Map<String, dynamic> toJson() => _$HomeitemResponseToJson(this);
+  factory HomeItemResponse.fromJson(Map<String, dynamic> json) => _$HomeItemResponseFromJson(json);
+  Map<String, dynamic> toJson() => _$HomeItemResponseToJson(this);
 }

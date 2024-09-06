@@ -44,15 +44,15 @@ Map<String, dynamic> _$SignInResponseToJson(SignInResponse instance) =>
       'username': instance.username,
     };
 
-HomeitemResponse _$HomeitemResponseFromJson(Map<String, dynamic> json) =>
-    HomeitemResponse()
-      ..id = json['id'] as String
+HomeItemResponse _$HomeItemResponseFromJson(Map<String, dynamic> json) =>
+    HomeItemResponse()
+      ..id = (json['id'] as num).toInt()
       ..name = json['name'] as String
-      ..percentageDone = json['percentageDone'] as String
-      ..percentageTimeSpent = json['percentageTimeSpent'] as String
+      ..percentageDone = (json['percentageDone'] as num).toInt()
+      ..percentageTimeSpent = (json['percentageTimeSpent'] as num).toInt()
       ..deadline = json['deadline'] as String;
 
-Map<String, dynamic> _$HomeitemResponseToJson(HomeitemResponse instance) =>
+Map<String, dynamic> _$HomeItemResponseToJson(HomeItemResponse instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
