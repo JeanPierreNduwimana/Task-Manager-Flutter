@@ -63,3 +63,17 @@ class HomeItemResponse {
   factory HomeItemResponse.fromJson(Map<String, dynamic> json) => _$HomeItemResponseFromJson(json);
   Map<String, dynamic> toJson() => _$HomeItemResponseToJson(this);
 }
+
+@JsonSerializable()
+class AddTaskRequest {
+  AddTaskRequest();
+
+  int id = 0;
+  String name = '';
+  int percentageDone = 0;
+  int percentageTimeSpent = 0;
+  String deadline = '';
+
+  factory AddTaskRequest.fromJson(Map<String, dynamic> json) => _$AddTaskRequestFromJson(json);
+  Map<String, dynamic> toJson() => _$AddTaskRequestToJson(this);
+}

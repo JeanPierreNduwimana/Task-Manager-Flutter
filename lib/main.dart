@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tp1_flutter/accueil.dart';
 import 'package:tp1_flutter/connexion.dart';
+import 'package:tp1_flutter/consultation_tache.dart';
 import 'package:tp1_flutter/creation_tache.dart';
 
 import 'inscription.dart';
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
         '/connexion': (context) => const Connexion(),
         '/accueil': (context) => const Accueil(),
         '/creationtache': (context) => const CreationTache(),
+        '/consultation_tache' : (context) => const ConsultationTache(),
       },
     );
   }

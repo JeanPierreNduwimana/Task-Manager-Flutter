@@ -48,6 +48,9 @@ class AccueilState extends State<Accueil> {
               final tache = taches[index];
               return ListTile(
                 title: Text(tache.name),
+                onTap: (){
+                  Navigator.pushNamed(context, '/consultation_tache');
+                },
               );
             }
             return null;

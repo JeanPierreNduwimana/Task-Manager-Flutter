@@ -143,6 +143,14 @@ class _CreationTacheState extends State<CreationTache> {
       if(ErreurChamps(name, annee, mois, jour)){
         _formKey.currentState!.validate();
       }else {
+
+        String date = '$annee-$mois-$jour';
+        AddTaskRequest req = new AddTaskRequest();
+
+        req.name = name;
+        req.deadline = date;
+
+        await AddTask(req);
         Navigator.pushNamed(context, '/accueil');
       }
 
