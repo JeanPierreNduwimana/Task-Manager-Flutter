@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:tp1_flutter/lib_http.dart';
+import 'package:tp1_flutter/tiroir_nav.dart';
 import 'package:tp1_flutter/transfer.dart';
 
 
 class CreationTache extends StatefulWidget {
   const CreationTache({super.key});
+
 
   @override
   State<CreationTache> createState() => _CreationTacheState();
@@ -16,14 +18,18 @@ final TextEditingController annee_controller = TextEditingController();
 final TextEditingController mois_controller = TextEditingController();
 final TextEditingController jour_controller = TextEditingController();
 
+
 bool errorannee = false;
 bool errormois = false;
 bool errorjour = false;
 bool errornom = false;
 
 class _CreationTacheState extends State<CreationTache> {
+
+
   @override
   Widget build(BuildContext context) {
+    final String username = ModalRoute.of(context)!.settings.arguments as String;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Creation de tâches'),
@@ -125,7 +131,7 @@ class _CreationTacheState extends State<CreationTache> {
                               ),
                 SizedBox(height: 16),
                 ElevatedButton(onPressed: (){
-                  CreerTache(tache_nom_controller.text, annee_controller.text, mois_controller.text, jour_controller.text);
+                  CreerTache(tache_nom_controller.text, annee_controller.text, mois_controller.text, jour_controller.text, username);
                 }, child: const Text('Create Task'))
 
 
@@ -135,10 +141,19 @@ class _CreationTacheState extends State<CreationTache> {
 
         ),
       ),
+      drawer: LeTiroir(username: username,),
+      floatingActionButton: FloatingActionButton(
+        //backgroundColor: const Color.fromRGBO(82, 170, 94, 1.0),
+        tooltip: 'Increment',
+        onPressed: (){
+          Navigator.pushNamed(context, '/accueil', arguments: username);
+        },
+        child: const Icon(Icons.home, color: Colors.white, size: 28),
+      ),
     );
   }
 
-  void CreerTache(String name, String annee, String mois, String jour) async{
+  void CreerTache(String name, String annee, String mois, String jour, String username) async{
 
       if(ErreurChamps(name, annee, mois, jour)){
         _formKey.currentState!.validate();
@@ -151,7 +166,9 @@ class _CreationTacheState extends State<CreationTache> {
         req.deadline = date;
 
         await AddTask(req);
-        Navigator.pushNamed(context, '/accueil');
+        Navigator.pushNamed(
+            context, '/acceuil', arguments: username
+        );
       }
 
   }

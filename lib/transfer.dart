@@ -77,3 +77,17 @@ class AddTaskRequest {
   factory AddTaskRequest.fromJson(Map<String, dynamic> json) => _$AddTaskRequestFromJson(json);
   Map<String, dynamic> toJson() => _$AddTaskRequestToJson(this);
 }
+
+@JsonSerializable()
+class TaskDetailResponse {
+  TaskDetailResponse();
+
+  int id = 0;
+  String name = '';
+  int percentageDone = 0;
+  int percentageTimeSpent = 0;
+  String deadline = '';
+
+  factory TaskDetailResponse.fromJson(Map<String, dynamic> json) => _$TaskDetailResponseFromJson(json);
+  Map<String, dynamic> toJson() => _$TaskDetailResponseToJson(this);
+}

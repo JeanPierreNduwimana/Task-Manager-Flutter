@@ -79,10 +79,10 @@ class Connexion extends StatelessWidget {
 
     String name = response.username;
 
-    Navigator.pushReplacementNamed(context, '/accueil');
-
+    Navigator.pushReplacementNamed(context, '/accueil', arguments: name);
+/*
     ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('La response est: $name')));
+        SnackBar(content: Text('La response est: $name'))); */
 
 
   }

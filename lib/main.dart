@@ -31,7 +31,6 @@ class MyApp extends StatelessWidget {
         '/connexion': (context) => const Connexion(),
         '/accueil': (context) => const Accueil(),
         '/creationtache': (context) => const CreationTache(),
-        '/consultation_tache' : (context) => const ConsultationTache(),
       },
     );
   }
