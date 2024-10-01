@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:tp1_flutter/tiroir_nav.dart';
 import 'package:tp1_flutter/transfer.dart';
 
@@ -19,6 +22,23 @@ class ConsultationTache extends StatefulWidget {
 class _ConsultationState extends State<ConsultationTache> {
   TaskDetailResponse tache = new TaskDetailResponse();
   double _sliderValue = 0;
+  String imagePath = "";
+  Container _imageContainer = new Container();
+  Image image = new Image.asset(
+    'assets/images/add_photo.png',
+    semanticLabel:  'Image de la tache');
+
+  void getImage() async{
+
+    ImagePicker picker = ImagePicker();
+    XFile? pickedImage = await picker.pickImage(source: ImageSource.gallery);
+    imagePath = pickedImage!.path;
+
+    if(imagePath != ""){
+      image = Image.file(File(imagePath),fit: BoxFit.cover,);
+    }
+    setState(() {});
+  }
 
   @override
   void initState() {
@@ -114,7 +134,26 @@ class _ConsultationState extends State<ConsultationTache> {
                 ),
               ],
             ),
-            const SizedBox(height: 100,),
+            const SizedBox(height: 40,),
+            new GestureDetector(
+              onTap: (){
+                getImage();
+              },
+              child:  Container(
+                height: 100,
+                width: 100,
+                decoration: BoxDecoration(
+                  color: Colors.black26,
+                  border: Border.all(
+                    color: Colors.black12, // Border color
+                    width: 1.0,// Border width
+                  ),
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                child: image,
+              ),
+            ),
+            const SizedBox(height: 40,),
             Slider(
                 value: _sliderValue,
                 min: 0,

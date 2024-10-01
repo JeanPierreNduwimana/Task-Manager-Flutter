@@ -127,9 +127,9 @@ class _InscriptionPageState extends State<InscriptionPage> {
       var response = await signup(req);
 
       String name = response.username;
-      Navigator.pushNamed(context, '/accueil');
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('username: $name')));
+      Navigator.pushNamed(context, '/accueil', arguments: response.username);
+     /* ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('username: $name'))); */
     }
 
 

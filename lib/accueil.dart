@@ -37,7 +37,7 @@ class AccueilState extends State<Accueil> {
           children: [
             Text('Aucune tâche disponible'),
             ElevatedButton(onPressed: (){
-              Navigator.pushNamed(context, '/creationtache');
+              Navigator.pushNamed(context, '/creationtache', arguments: username);
             },
             child: const Text('Ajouter une tâche'))
           ],

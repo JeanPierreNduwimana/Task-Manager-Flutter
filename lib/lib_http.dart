@@ -13,7 +13,7 @@ class SingletonDio {
     return dio;
 }
 }
- String api = 'http://10.10.46.13:8080/api/';
+ String api = 'http://10.10.45.11:8080/api/';
 
 Future<SignUpResponse> signup(SignUpRequest req) async {
   try {

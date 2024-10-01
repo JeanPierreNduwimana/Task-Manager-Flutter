@@ -7,3 +7,5 @@ dart run build_runner build --delete-conflicting-outputs //code qui genere le fi
 https://www.macincloud.com/
 
 https://www.macincloud.com/
+
+Pour deployement: https://www.youtube.com/watch?v=jm_cKADnNqc

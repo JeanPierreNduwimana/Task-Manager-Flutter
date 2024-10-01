@@ -23,7 +23,7 @@ class LeTiroirState extends State<LeTiroir> {
           child: Stack(
             alignment: Alignment.center, // Centre le contenu du Stack
             children: [
-              Image.asset('assets/background_image.jpg'), // L'image
+              Image.asset('assets/images/background_image.jpg'), // L'image
               Column(
                 children: [
                   Text(this.widget.username, // Le texte à afficher
