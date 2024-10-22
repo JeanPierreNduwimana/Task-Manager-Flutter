@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:tp1_flutter/transfer.dart';
@@ -13,11 +15,11 @@ class SingletonDio {
     return dio;
 }
 }
- String api = 'http://10.10.45.11:8080/api/';
+ String api = 'http://10.10.45.21:8080/';
 
 Future<SignUpResponse> signup(SignUpRequest req) async {
   try {
-    var response = await SingletonDio.getDio().post( '${api}id/signup', data: req.toJson());
+    var response = await SingletonDio.getDio().post( '${api}api/id/signup', data: req.toJson());
     print(response);
     return SignUpResponse.fromJson(response.data);
   } catch(e) {
@@ -28,7 +30,7 @@ Future<SignUpResponse> signup(SignUpRequest req) async {
 
 Future<SignInResponse> signin(SignInRequest req) async {
   try {
-    var response = await SingletonDio.getDio().post('${api}id/signin', data: req.toJson());
+    var response = await SingletonDio.getDio().post('${api}api/id/signin', data: req.toJson());
     print(response);
     return SignInResponse.fromJson(response.data);
   } catch(e) {
@@ -39,7 +41,7 @@ Future<SignInResponse> signin(SignInRequest req) async {
 
 Future<void> AddTask(AddTaskRequest req) async {
   try {
-    await SingletonDio.getDio().post('${api}add', data: req.toJson());
+    await SingletonDio.getDio().post('${api}api/add', data: req.toJson());
   } catch(e) {
     print(e);
     throw(e);
@@ -48,21 +50,21 @@ Future<void> AddTask(AddTaskRequest req) async {
 
 Future<void> deconnexion() async {
   try {
-    await SingletonDio.getDio().post('${api}id/signout');
+    await SingletonDio.getDio().post('${api}api/id/signout');
   } catch(e) {
     print(e);
     throw(e);
   }
 }
 
-Future<List<HomeItemResponse>> getHomeItemResponse() async {
+Future<List<HomeItemPhotoResponse>> getHomeItemResponse() async {
   try {
-    var response = await SingletonDio.getDio().get('${api}home');
+    var response = await SingletonDio.getDio().get('${api}api/home');
 
     var listeJSON = response.data as List;
 
     var listetaches = listeJSON.map((elementJSON) {
-      return HomeItemResponse.fromJson(elementJSON);
+      return HomeItemPhotoResponse.fromJson(elementJSON);
     }).toList();
 
     return listetaches;
@@ -73,10 +75,10 @@ Future<List<HomeItemResponse>> getHomeItemResponse() async {
   }
 }
 
-Future<TaskDetailResponse> getdetailsTache(String id) async {
+Future<TaskDetailPhotoResponse> getdetailsTache(String id) async {
   try {
-     var response = await SingletonDio.getDio().get('${api}detail/$id');
-     return TaskDetailResponse.fromJson(response.data);
+     var response = await SingletonDio.getDio().get('${api}api/detail/$id');
+     return TaskDetailPhotoResponse.fromJson(response.data);
   } catch(e) {
     print(e);
     throw(e);
@@ -85,7 +87,7 @@ Future<TaskDetailResponse> getdetailsTache(String id) async {
 
 Future<String> updateProgress(String id, String progression) async {
   try {
-    await SingletonDio.getDio().get('${api}progress/$id/$progression');
+    await SingletonDio.getDio().get('${api}api/progress/$id/$progression');
     return '200';
   } catch(e) {
     print(e);
@@ -96,7 +98,27 @@ Future<String> updateProgress(String id, String progression) async {
 
 Future<void> signout() async {
   try {
-    await SingletonDio.getDio().post('${api}id/signout');
+    await SingletonDio.getDio().post('${api}api/id/signout');
+  } catch(e) {
+    print(e);
+    throw(e);
+  }
+}
+
+Future<String> uploadImage(FormData formdata) async {
+  try {
+    var response = await SingletonDio.getDio().post('${api}file', data: formdata);
+    return response.data;
+  } catch(e) {
+    print(e);
+    throw(e);
+  }
+}
+
+Future<ByteData> getImage(String id) async {
+  try {
+    var response = await SingletonDio.getDio().get('${api}file/$id');
+    return response.data;
   } catch(e) {
     print(e);
     throw(e);

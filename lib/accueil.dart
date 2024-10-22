@@ -13,7 +13,7 @@ class Accueil extends StatefulWidget {
 
 class AccueilState extends State<Accueil> {
 
-  List<HomeItemResponse> taches= [];
+  List<HomeItemPhotoResponse> taches= [];
 
   @override
   void initState() {
@@ -22,7 +22,7 @@ class AccueilState extends State<Accueil> {
     getListTaches();
   }
 
-  Future<List<HomeItemResponse>> getListTaches() async{
+  Future<List<HomeItemPhotoResponse>> getListTaches() async{
 
     taches = await getHomeItemResponse();
     setState(() {});
@@ -54,6 +54,7 @@ class AccueilState extends State<Accueil> {
                 decoration: BoxDecoration(color: Colors.grey[200],borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.grey, width: 1)),
                 
                 child: ListTile(
+                  leading: tache.photoId != 0? ,
                   title: Text(tache.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
                   subtitle: Column(
                     children: [

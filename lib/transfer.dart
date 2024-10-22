@@ -1,5 +1,6 @@
 import 'dart:ffi';
 
+import 'package:dio/dio.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'transfer.g.dart';
@@ -51,17 +52,18 @@ class SignInResponse {
 }
 
 @JsonSerializable()
-class HomeItemResponse {
-  HomeItemResponse();
+class HomeItemPhotoResponse {
+  HomeItemPhotoResponse();
 
   int id = 0;
+  int photoId = 0;
   String name = '';
   int percentageDone = 0;
   int percentageTimeSpent = 0;
   String deadline = '';
 
-  factory HomeItemResponse.fromJson(Map<String, dynamic> json) => _$HomeItemResponseFromJson(json);
-  Map<String, dynamic> toJson() => _$HomeItemResponseToJson(this);
+  factory HomeItemPhotoResponse.fromJson(Map<String, dynamic> json) => _$HomeItemPhotoResponseFromJson(json);
+  Map<String, dynamic> toJson() => _$HomeItemPhotoResponseToJson(this);
 }
 
 @JsonSerializable()
@@ -79,15 +81,16 @@ class AddTaskRequest {
 }
 
 @JsonSerializable()
-class TaskDetailResponse {
-  TaskDetailResponse();
+class TaskDetailPhotoResponse {
+  TaskDetailPhotoResponse();
 
   int id = 0;
+  int photoId = 0;
   String name = '';
   int percentageDone = 0;
   int percentageTimeSpent = 0;
   String deadline = '';
 
-  factory TaskDetailResponse.fromJson(Map<String, dynamic> json) => _$TaskDetailResponseFromJson(json);
-  Map<String, dynamic> toJson() => _$TaskDetailResponseToJson(this);
+  factory TaskDetailPhotoResponse.fromJson(Map<String, dynamic> json) => _$TaskDetailPhotoResponseFromJson(json);
+  Map<String, dynamic> toJson() => _$TaskDetailPhotoResponseToJson(this);
 }

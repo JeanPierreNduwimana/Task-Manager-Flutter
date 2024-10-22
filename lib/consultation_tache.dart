@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -20,10 +21,10 @@ class ConsultationTache extends StatefulWidget {
 }
 
 class _ConsultationState extends State<ConsultationTache> {
-  TaskDetailResponse tache = new TaskDetailResponse();
+  TaskDetailPhotoResponse tache = new TaskDetailPhotoResponse();
   double _sliderValue = 0;
   String imagePath = "";
-  Container _imageContainer = new Container();
+  XFile? pickedImage;
   Image image = new Image.asset(
     'assets/images/add_photo.png',
     semanticLabel:  'Image de la tache');
@@ -31,13 +32,21 @@ class _ConsultationState extends State<ConsultationTache> {
   void getImage() async{
 
     ImagePicker picker = ImagePicker();
-    XFile? pickedImage = await picker.pickImage(source: ImageSource.gallery);
+    pickedImage = await picker.pickImage(source: ImageSource.gallery);
     imagePath = pickedImage!.path;
 
     if(imagePath != ""){
       image = Image.file(File(imagePath),fit: BoxFit.cover,);
     }
     setState(() {});
+  }
+
+  void sendImage(String imagePath, int taskId) async{
+    FormData formData = FormData.fromMap({
+      "file" : await MultipartFile.fromFile(imagePath, filename: pickedImage!.name),
+      "taskID": taskId
+    });
+    await uploadImage(formData);
   }
 
   @override
@@ -47,7 +56,7 @@ class _ConsultationState extends State<ConsultationTache> {
     DetailsTache(this.widget.id);
   }
 
-  Future<TaskDetailResponse> DetailsTache(String id) async{
+  Future<TaskDetailPhotoResponse> DetailsTache(String id) async{
 
     tache = await getdetailsTache(id);
     _sliderValue = double.parse(tache.percentageDone.toString());
@@ -168,7 +177,11 @@ class _ConsultationState extends State<ConsultationTache> {
                 }),
             const SizedBox(height: 40,),
             ElevatedButton(onPressed:(){
-              MiseAJourProgression(tache.id.toString(), _sliderValue.round().toString());
+              if(imagePath != ""){
+                sendImage(imagePath, tache.id);
+              }else{
+                MiseAJourProgression(tache.id.toString(), _sliderValue.round().toString());
+              }
 
             },
                 child: Text('Mettre à jour ma progression')),

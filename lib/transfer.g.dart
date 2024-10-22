@@ -44,17 +44,21 @@ Map<String, dynamic> _$SignInResponseToJson(SignInResponse instance) =>
       'username': instance.username,
     };
 
-HomeItemResponse _$HomeItemResponseFromJson(Map<String, dynamic> json) =>
-    HomeItemResponse()
+HomeItemPhotoResponse _$HomeItemPhotoResponseFromJson(
+        Map<String, dynamic> json) =>
+    HomeItemPhotoResponse()
       ..id = (json['id'] as num).toInt()
+      ..photoId = (json['photoId'] as num).toInt()
       ..name = json['name'] as String
       ..percentageDone = (json['percentageDone'] as num).toInt()
       ..percentageTimeSpent = (json['percentageTimeSpent'] as num).toInt()
       ..deadline = json['deadline'] as String;
 
-Map<String, dynamic> _$HomeItemResponseToJson(HomeItemResponse instance) =>
+Map<String, dynamic> _$HomeItemPhotoResponseToJson(
+        HomeItemPhotoResponse instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'photoId': instance.photoId,
       'name': instance.name,
       'percentageDone': instance.percentageDone,
       'percentageTimeSpent': instance.percentageTimeSpent,
@@ -78,17 +82,21 @@ Map<String, dynamic> _$AddTaskRequestToJson(AddTaskRequest instance) =>
       'deadline': instance.deadline,
     };
 
-TaskDetailResponse _$TaskDetailResponseFromJson(Map<String, dynamic> json) =>
-    TaskDetailResponse()
+TaskDetailPhotoResponse _$TaskDetailPhotoResponseFromJson(
+        Map<String, dynamic> json) =>
+    TaskDetailPhotoResponse()
       ..id = (json['id'] as num).toInt()
+      ..photoId = (json['photoId'] as num).toInt()
       ..name = json['name'] as String
       ..percentageDone = (json['percentageDone'] as num).toInt()
       ..percentageTimeSpent = (json['percentageTimeSpent'] as num).toInt()
       ..deadline = json['deadline'] as String;
 
-Map<String, dynamic> _$TaskDetailResponseToJson(TaskDetailResponse instance) =>
+Map<String, dynamic> _$TaskDetailPhotoResponseToJson(
+        TaskDetailPhotoResponse instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'photoId': instance.photoId,
       'name': instance.name,
       'percentageDone': instance.percentageDone,
       'percentageTimeSpent': instance.percentageTimeSpent,
