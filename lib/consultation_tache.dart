@@ -41,7 +41,7 @@ class _ConsultationState extends State<ConsultationTache> {
     setState(() {});
   }
 
-  void sendImage(String imagePath, int taskId) async{
+  Future<void> sendImage(String imagePath, int taskId) async{
     FormData formData = FormData.fromMap({
       "file" : await MultipartFile.fromFile(imagePath, filename: pickedImage!.name),
       "taskID": taskId
@@ -59,6 +59,9 @@ class _ConsultationState extends State<ConsultationTache> {
   Future<TaskDetailPhotoResponse> DetailsTache(String id) async{
 
     tache = await getdetailsTache(id);
+    if(tache.photoId != 0) {
+      image = downloadImage(tache.photoId);
+    }
     _sliderValue = double.parse(tache.percentageDone.toString());
     setState(() {});
     return tache;
@@ -82,7 +85,7 @@ class _ConsultationState extends State<ConsultationTache> {
               child: Column(
                 children: [
                   Text(tache.name,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 25,
                       fontWeight: FontWeight.bold,
                     ),),
@@ -176,15 +179,16 @@ class _ConsultationState extends State<ConsultationTache> {
 
                 }),
             const SizedBox(height: 40,),
-            ElevatedButton(onPressed:(){
+            ElevatedButton(onPressed:() async {
               if(imagePath != ""){
-                sendImage(imagePath, tache.id);
+                await sendImage(imagePath, tache.id);
+                await MiseAJourProgression(tache.id.toString(), _sliderValue.round().toString());
               }else{
                 MiseAJourProgression(tache.id.toString(), _sliderValue.round().toString());
               }
 
             },
-                child: Text('Mettre à jour ma progression')),
+                child: const Text('Mettre à jour ma progression')),
           ],
         ),
 

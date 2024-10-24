@@ -1,6 +1,5 @@
-import 'dart:typed_data';
-
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:tp1_flutter/transfer.dart';
 import 'package:cookie_jar/cookie_jar.dart';
@@ -15,7 +14,7 @@ class SingletonDio {
     return dio;
 }
 }
- String api = 'http://10.10.45.21:8080/';
+String api = 'http://10.10.45.140:8080/';
 
 Future<SignUpResponse> signup(SignUpRequest req) async {
   try {
@@ -59,7 +58,7 @@ Future<void> deconnexion() async {
 
 Future<List<HomeItemPhotoResponse>> getHomeItemResponse() async {
   try {
-    var response = await SingletonDio.getDio().get('${api}api/home');
+    var response = await SingletonDio.getDio().get('${api}api/home/photo');
 
     var listeJSON = response.data as List;
 
@@ -77,7 +76,7 @@ Future<List<HomeItemPhotoResponse>> getHomeItemResponse() async {
 
 Future<TaskDetailPhotoResponse> getdetailsTache(String id) async {
   try {
-     var response = await SingletonDio.getDio().get('${api}api/detail/$id');
+     var response = await SingletonDio.getDio().get('${api}api/detail/photo/$id');
      return TaskDetailPhotoResponse.fromJson(response.data);
   } catch(e) {
     print(e);
@@ -115,12 +114,6 @@ Future<String> uploadImage(FormData formdata) async {
   }
 }
 
-Future<ByteData> getImage(String id) async {
-  try {
-    var response = await SingletonDio.getDio().get('${api}file/$id');
-    return response.data;
-  } catch(e) {
-    print(e);
-    throw(e);
-  }
+Image downloadImage(int id) {
+  return Image.network('${api}file/$id',height: 80, width: 80, fit: BoxFit.cover,);
 }

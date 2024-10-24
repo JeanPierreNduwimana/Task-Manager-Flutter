@@ -24,7 +24,6 @@ class MyApp extends StatelessWidget {
       ),
 
       home: const Connexion(),
-
       routes: {
         '/inscription': (context) => const InscriptionPage(),
         '/connexion': (context) => const Connexion(),

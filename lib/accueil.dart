@@ -4,6 +4,8 @@ import 'package:tp1_flutter/lib_http.dart';
 import 'package:tp1_flutter/tiroir_nav.dart';
 import 'package:tp1_flutter/transfer.dart';
 
+
+
 class Accueil extends StatefulWidget {
   const Accueil({super.key});
 
@@ -23,6 +25,7 @@ class AccueilState extends State<Accueil> {
   }
 
   Future<List<HomeItemPhotoResponse>> getListTaches() async{
+
 
     taches = await getHomeItemResponse();
     setState(() {});
@@ -53,34 +56,48 @@ class AccueilState extends State<Accueil> {
                 //padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(color: Colors.grey[200],borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.grey, width: 1)),
                 
-                child: ListTile(
-                  leading: tache.photoId != 0? ,
-                  title: Text(tache.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
-                  subtitle: Column(
+                child: GestureDetector(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const SizedBox(height: 10,),
-                      Row(
-                        children: [
-                          const Icon(Icons.hourglass_bottom, size: 16,),
-                          Text('${tache.percentageTimeSpent} %'),
-                          const SizedBox(width:20),
-                          const Icon(Icons.flag, size: 16),
-                          Text('${formattageDate(tache.deadline)} %')
-                        ],
+                      Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(tache.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(height: 10,),
+                                Row(
+                                  children: [
+                                    const Icon(Icons.hourglass_bottom, size: 16,),
+                                    Text('${tache.percentageTimeSpent} %'),
+                                    const SizedBox(width:20),
+                                    const Icon(Icons.flag, size: 16),
+                                    Text('${formattageDate(tache.deadline)} %')
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Icon(Icons.check, size: 16,),
+                                    Text('${tache.percentageDone} %')
+                                  ],
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                      Row(
-                        children: [
-                          Icon(Icons.check, size: 16,),
-                          Text('${tache.percentageDone} %')
-                        ],
-                      )
+                      (tache.photoId != 0)? Container( margin: const EdgeInsets.only(right: 12),
+                        child: downloadImage(tache.photoId)) : const SizedBox(),
                     ],
                   ),
                   onTap: (){
                     Navigator.push(context,MaterialPageRoute(builder: (context) => ConsultationTache(id: tache.id.toString(), username: username)),
                     );
                   },
-                  
                 ),
               );
             }
