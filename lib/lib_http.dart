@@ -14,7 +14,7 @@ class SingletonDio {
     return dio;
 }
 }
-String api = 'http://10.10.46.17:8080/';
+String api = 'http://10.10.45.130:8080/';
 
 Future<SignUpResponse> signup(SignUpRequest req) async {
   try {
@@ -45,6 +45,24 @@ Future<void> AddTask(AddTaskRequest req) async {
     print(e);
     throw(e);
   }
+}
+
+Future<void> removePhoto(int Photoid) async {
+    try{
+      await SingletonDio.getDio().post('${api}file/delete/${Photoid}');
+    }catch(e){
+
+    }
+}
+
+Future<void> removeTask(TaskDetailPhotoResponse req) async {
+  try {
+    await SingletonDio.getDio().post('${api}api/detail/delete/', data: req.toJson());
+  } catch(e) {
+    print(e);
+    throw(e);
+  }
+
 }
 
 Future<void> deconnexion() async {

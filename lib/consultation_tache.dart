@@ -189,6 +189,28 @@ class _ConsultationState extends State<ConsultationTache> {
 
             },
                 child: const Text('Mettre à jour ma progression')),
+            ElevatedButton(
+
+                onPressed:() async {
+
+                  await removeTask(tache);
+
+                  /*
+                  if(tache.photoId != 0){
+                      try{
+                      //await removePhoto(tache.photoId);
+                      } catch(Exception){} finally {
+                        try{
+                          await removeTask(tache);
+                        }catch(e){}finally{
+                          Navigator.pushNamed(context, '/accueil', arguments: this.widget.username);
+
+                        }
+                      }
+                  }*/
+
+             },
+                child: const Text('Supprimer')),
           ],
         ),
 
