@@ -98,8 +98,8 @@ class _ConsultationState extends State<ConsultationTache> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  margin: EdgeInsets.only(left: 16.0),
-                  padding: EdgeInsets.all(24.0),
+                  margin: const EdgeInsets.only(left: 16.0),
+                  padding: const EdgeInsets.all(24.0),
                   decoration: BoxDecoration(
                     border: Border.all(
                       color: Colors.black38, // Border color
@@ -111,7 +111,7 @@ class _ConsultationState extends State<ConsultationTache> {
                     child: Column(
                       children: [
                         Text('${tache.percentageTimeSpent} %',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),),
@@ -135,11 +135,11 @@ class _ConsultationState extends State<ConsultationTache> {
                     child: Column(
                       children: [
                         Text('${tache.percentageDone} %',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),),
-                        Text('Progression'),
+                        const Text('Progression'),
                       ],
                     ),
                   ),
@@ -147,7 +147,7 @@ class _ConsultationState extends State<ConsultationTache> {
               ],
             ),
             const SizedBox(height: 40,),
-            new GestureDetector(
+            GestureDetector(
               onTap: (){
                 getImage();
               },
@@ -179,42 +179,36 @@ class _ConsultationState extends State<ConsultationTache> {
 
                 }),
             const SizedBox(height: 40,),
-            ElevatedButton(onPressed:() async {
-              if(imagePath != ""){
-                await sendImage(imagePath, tache.id);
-                await MiseAJourProgression(tache.id.toString(), _sliderValue.round().toString());
-              }else{
-                MiseAJourProgression(tache.id.toString(), _sliderValue.round().toString());
-              }
-
-            },
-                child: const Text('Mettre à jour ma progression')),
-            ElevatedButton(
-
-                onPressed:() async {
-
-                  await removeTask(tache);
-
-                  /*
-                  if(tache.photoId != 0){
-                      try{
-                      //await removePhoto(tache.photoId);
-                      } catch(Exception){} finally {
-                        try{
-                          await removeTask(tache);
-                        }catch(e){}finally{
-                          Navigator.pushNamed(context, '/accueil', arguments: this.widget.username);
-
-                        }
-                      }
-                  }*/
-
-             },
-                child: const Text('Supprimer')),
+            ElevatedButton(onPressed:() async {btnMiseAJour();}, child: const Text('Mettre à jour ma progression')),
+            ElevatedButton( onPressed:() async{btnSupprimer();}, child: const Text('Supprimer')),
           ],
         ),
-
       );
+  }
+
+  void btnMiseAJour() async {
+    try{
+      if(imagePath != ""){
+        try{
+          await sendImage(imagePath, tache.id);} catch(e){
+          afficherMessage("Le serveur n'a pas aimé cette image, essayer avec une autre et ca marchera, promis 😉", context,10);
+        }
+        await MiseAJourProgression(tache.id.toString(), _sliderValue.round().toString());
+      }else{
+        MiseAJourProgression(tache.id.toString(), _sliderValue.round().toString());
+      }
+    }finally{
+      afficherMessage("La tache est mise à jour 👌", context,5);
+    }
+  }
+
+  void btnSupprimer() async {
+    try{
+      await removeTask(tache);
+    }finally {
+      Navigator.pushNamed(context, '/accueil', arguments: this.widget.username);
+      afficherMessage("La tache ${tache.name} est supprimé 🔪", context,5);
+    }
   }
 
   @override
@@ -241,8 +235,6 @@ class _ConsultationState extends State<ConsultationTache> {
 }
 
 String formattageDate( String isoDate){
-
-
   if(isoDate == ''){
     return '';
   }
@@ -256,5 +248,8 @@ String formattageDate( String isoDate){
   // retourne la date formatée
   return formattedDate;
 }
+
+
+
 
 

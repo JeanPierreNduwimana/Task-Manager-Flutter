@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:tp1_flutter/transfer.dart';
 
@@ -54,9 +55,7 @@ class _InscriptionPageState extends State<InscriptionPage> {
                         hintStyle: TextStyle(color: Colors.black38)
                     ),
                     validator: (value) {
-                      if (passwordError) {
-                        return 'Mauvais!!';
-                      }
+                      if (passwordError) {return 'Mot de passe non-identiques';}
                       return null;
                     },
                   ),
@@ -70,9 +69,7 @@ class _InscriptionPageState extends State<InscriptionPage> {
                         hintStyle: TextStyle(color: Colors.black38)
                     ),
                     validator: (value) {
-                      if (passwordError) {
-                        return 'Mauvais!!';
-                      }
+                      if (passwordError) {return 'Mot de passe non-identiques';}
                       return null;
                     },
                   ),
@@ -107,31 +104,50 @@ class _InscriptionPageState extends State<InscriptionPage> {
 
   bool passwordError = false;
 
-  void inscription(String username, String password,String confirmpassword, BuildContext context) async{
+  void inscription(String username, String password,String confirmpassword, BuildContext context) async {
     SignUpRequest req = SignUpRequest();
     req.username = username;
     req.password = password;
 
+    if (!validation(username, password, confirmpassword)) {
 
+      var response;
+      try{
+        response = await signup(req);
+      }catch(e){
+        if(e is DioException){
+          if(e.response?.data != null){
+            erreurServeur(e.response!.data.toString(), context);
+          }
+        }else{
+          erreurServeur("UnkownError", context);
+        }
+      }finally{
+        Navigator.pushNamed(context, '/accueil', arguments: response.username);
+        afficherMessage('Bienvenue ${response.username} 🎉', context, 8);
+      }
+    }
+  }
 
-    if(req.password != confirmpassword){
+  bool validation(String username, String password,String confirmpassword){
+    passwordError = false;
+    _formKey.currentState!.validate();
+    setState(() {});
 
-      passwordError = true;
-
-      _formKey.currentState!.validate();
-
-      setState(() {
-
-      });
-    } else {
-      var response = await signup(req);
-
-      String name = response.username;
-      Navigator.pushNamed(context, '/accueil', arguments: response.username);
-     /* ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('username: $name'))); */
+    if(username == "" || password == "" || confirmpassword == ""){
+      afficherMessage("Aucun champ ne peut être vide", context, 2);
+      return true;
     }
 
+    if(password != confirmpassword){
+      passwordError = true;
+      _formKey.currentState!.validate();
+      setState(() {});
+      afficherMessage("Mot de passe non-identiques", context, 2);
+      return true;
+    }
+
+    return false;
 
   }
 }

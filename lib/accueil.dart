@@ -51,12 +51,11 @@ class AccueilState extends State<Accueil> {
           itemBuilder: (BuildContext context, int index ){
             if(index < taches.length){
               final tache = taches[index];
-              return Container(
-                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                //padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(color: Colors.grey[200],borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.grey, width: 1)),
-                
-                child: GestureDetector(
+              return GestureDetector(
+                  child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            //padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(color: Colors.grey[200],borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.grey, width: 1)),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -93,13 +92,12 @@ class AccueilState extends State<Accueil> {
                       (tache.photoId != 0)? Container( margin: const EdgeInsets.only(right: 12),
                         child: downloadImage(tache.photoId)) : const SizedBox(),
                     ],
-                  ),
+                  ), ),
                   onTap: (){
                     Navigator.push(context,MaterialPageRoute(builder: (context) => ConsultationTache(id: tache.id.toString(), username: username)),
                     );
                   },
-                ),
-              );
+                );
             }
             return null;
           },
@@ -119,7 +117,6 @@ class AccueilState extends State<Accueil> {
       drawer: LeTiroir(username: username),
 
       floatingActionButton: FloatingActionButton(
-        //backgroundColor: const Color.fromRGBO(82, 170, 94, 1.0),
         tooltip: 'Increment',
         onPressed: (){
           Navigator.pushNamed(context, '/creationtache', arguments: username);
@@ -132,17 +129,13 @@ class AccueilState extends State<Accueil> {
 
 String formattageDate( String isoDate){
 
-
   if(isoDate == ''){
     return '';
   }
-
   // Convertir la chaîne en objet DateTime
   DateTime dateTime = DateTime.parse(isoDate);
-
   // Formater la date en 'YYYY-MM-DD'
   String formattedDate = "${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}";
-
   // retourne la date formatée
   return formattedDate;
 }

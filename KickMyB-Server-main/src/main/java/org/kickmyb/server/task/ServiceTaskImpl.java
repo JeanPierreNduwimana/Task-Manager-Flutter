@@ -3,6 +3,9 @@ package org.kickmyb.server.task;
 import org.joda.time.DateTime;
 import org.kickmyb.server.account.MUser;
 import org.kickmyb.server.account.MUserRepository;
+import org.kickmyb.server.photo.MPhoto;
+import org.kickmyb.server.photo.MPhotoRepository;
+import org.kickmyb.server.photo.ServicePhoto;
 import org.kickmyb.transfer.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,6 +23,8 @@ public class ServiceTaskImpl implements ServiceTask {
     MUserRepository repoUser;
     @Autowired MTaskRepository repo;
     @Autowired MProgressEventRepository repoProgressEvent;
+    @Autowired MPhotoRepository repoPics;
+    ServicePhoto _servicePhoto = new ServicePhoto();
 
     private int percentage(Date start, Date current, Date end){
         if (current.after(end)) return 100;
@@ -77,6 +82,23 @@ public class ServiceTaskImpl implements ServiceTask {
         user.tasks.add(t);
         repoUser.save(user);
     }
+    @Override
+    public void removeOne(TaskDetailPhotoResponse req, MUser user) {
+        // valider que c'est non vide
+        MTask task = repo.findById(req.id).get();
+        user.tasks.remove(task);
+
+        if(task.photo != null){
+            MPhoto photo = task.photo;
+            task.photo = null;
+            photo.task = null;
+            repoPics.save(photo);
+            repoPics.delete(photo);
+        }
+
+        repo.delete(task);
+    }
+
 
     @Override
     public void updateProgress(long taskID, int value) {
@@ -152,6 +174,7 @@ public class ServiceTaskImpl implements ServiceTask {
         }
         return res;
     }
+
 
     @Override
     public TaskDetailPhotoResponse detailPhoto(Long id, MUser user) {

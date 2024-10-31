@@ -20,6 +20,7 @@ public interface ServiceTask {
     TaskDetailPhotoResponse detailPhoto(Long id, MUser user);
     List<HomeItemPhotoResponse> homePhoto(Long userID);
 
+    void removeOne(TaskDetailPhotoResponse req, MUser user);
     // Potential web demo for JS injection
     String index();
 

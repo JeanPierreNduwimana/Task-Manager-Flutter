@@ -51,6 +51,12 @@ public class ServicePhoto {
         return photo;
     }
 
+    public void supprimerPhoto(Long photoID){
+        repoPics.deleteById(photoID);
+
+        //repoPics.delete();
+    }
+
     /*public MPhoto getFileForTask(Long elementID) {
         MTask element = repo.findById(elementID).get();
         return repoPics.findByTask(element).get();

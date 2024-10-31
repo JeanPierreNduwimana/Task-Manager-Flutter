@@ -39,6 +39,16 @@ public class ControllerPhoto {
         return ResponseEntity.status(HttpStatus.OK).body(p.id.toString());
     }
 
+    @PostMapping(value = "/file/delete{id}", produces = "text/plain")
+    public String delete(@PathVariable Long photoId){
+        System.out.println("PHOTO : delete request ");
+        servicePhoto.supprimerPhoto(photoId);
+        ConfigHTTP.attenteArticifielle();
+        System.out.println("PHOTO deleted");
+        return "";
+
+    }
+
     @GetMapping("/file/{id}")
     public ResponseEntity<byte[]> taskPhoto(@PathVariable Long id, @RequestParam(required = false, name = "width") Integer maxWidth) throws IOException {
         System.out.println("PHOTO : download request " + id + " width " + maxWidth);

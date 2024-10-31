@@ -4,6 +4,7 @@ import org.kickmyb.server.ConfigHTTP;
 import org.kickmyb.server.account.MUser;
 import org.kickmyb.transfer.AddTaskRequest;
 import org.kickmyb.transfer.HomeItemResponse;
+import org.kickmyb.transfer.TaskDetailPhotoResponse;
 import org.kickmyb.transfer.TaskDetailResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,6 +34,16 @@ public class ControllerTask {
         return "";
     }
 
+    @PostMapping( value = "/api/detail/delete", produces = "text/plain")
+    public @ResponseBody String removeOne(@RequestBody TaskDetailPhotoResponse req) throws ServiceTask.Empty, ServiceTask.TooShort {
+        System.out.println("KICKB SERVER : Remove a task : " + req.name);
+        ConfigHTTP.attenteArticifielle();
+        MUser user = currentUser();
+        serviceTask.removeOne(req,user);
+        System.out.println("Task removed");
+        return "";
+    }
+
     @GetMapping(value = "/api/progress/{taskID}/{value}", produces = "text/plain")
     public @ResponseBody String updateProgress(@PathVariable long taskID, @PathVariable int value) {
         System.out.println("KICKB SERVER : Progress for task : " + taskID + " @" + value);
@@ -56,6 +67,8 @@ public class ControllerTask {
         MUser user = currentUser();
         return serviceTask.detail(id, user);
     }
+
+
 
     /**
      * Créer une page qui affiche tous les utilisateurs et les titres des tâches.

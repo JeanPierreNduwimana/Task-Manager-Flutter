@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:tp1_flutter/lib_http.dart';
@@ -66,8 +68,6 @@ class Connexion extends StatelessWidget {
           )
       ),
     );
-
-
   }
 
   void connexion(String username, String password, BuildContext context) async{
@@ -75,17 +75,28 @@ class Connexion extends StatelessWidget {
     req.username = username;
     req.password = password;
 
-    var response = await signin(req);
-
-    String name = response.username;
-
-    Navigator.pushReplacementNamed(context, '/accueil', arguments: name);
-/*
-    ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('La response est: $name'))); */
-
-
+    if(username == "" || password == ""){
+      afficherMessage("Aucun des champs ne peut être vide ☹", context, 2);
+    }else {
+      var response;
+      try{
+        response =  await signin(req);
+      }catch(e){
+        if(e is DioException){
+          if(e.response?.data != null){
+            erreurServeur(e.response!.data.toString(), context);
+          }
+        }else{
+          erreurServeur("UnkownError", context);
+        }
+      }finally{
+        String name = response.username;
+        Navigator.pushReplacementNamed(context, '/accueil', arguments: name);
+        afficherMessage('Bienvenue ${response.username} 🎉', context, 8);
+      }
+    }
   }
+
 
 
 }

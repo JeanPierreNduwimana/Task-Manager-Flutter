@@ -14,7 +14,7 @@ class SingletonDio {
     return dio;
 }
 }
-String api = 'http://10.10.45.130:8080/';
+String api = 'http://10.10.45.134:8080/';
 
 Future<SignUpResponse> signup(SignUpRequest req) async {
   try {
@@ -134,4 +134,49 @@ Future<String> uploadImage(FormData formdata) async {
 
 Image downloadImage(int id) {
   return Image.network('${api}file/$id',height: 80, width: 80, fit: BoxFit.cover,);
+}
+
+ScaffoldFeatureController<SnackBar, SnackBarClosedReason> afficherMessage(String message, BuildContext context, int duration){
+  return ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text(message), duration: Duration(seconds: duration),),
+  );
+}
+
+void erreurServeur(String typeDerreur, BuildContext context){
+
+  switch(typeDerreur)
+  {
+    case "InternalAuthenticationServiceException":
+      afficherMessage('Utilisateur inexistant veuillez vous inscrire 🙅‍♀️ \nErreur: $typeDerreur', context, 5);
+      break;
+    case "BadCredentialsException":
+      afficherMessage('Mot de passe invalide. Essayer de nouveau 🍀 \nErreur: $typeDerreur', context, 5);
+      break;
+    case "UsernameAlreadyTaken":
+      afficherMessage('Utilisateur existe deja 🙅‍ \nErreur: $typeDerreur', context, 5);
+      break;
+    case "UsernameTooShort":
+      afficherMessage('Le nom choisi est trop court 🤏 \nErreur: $typeDerreur', context, 5);
+      break;
+    case "PasswordTooShort":
+      afficherMessage('Votre mot de passe est trop court 🤏 \nErreur: $typeDerreur', context, 5);
+      break;
+    case "Empty":
+      afficherMessage('Nom de la tâche est vide 🤷‍♂️ \nErreur: $typeDerreur', context, 5);
+      break;
+    case "Existing":
+      afficherMessage('Nom de la tâche  existe déjà️ 🙅‍ \nErreur: $typeDerreur', context, 5);
+      break;
+    case "TooShort":
+      afficherMessage('Nom de la tâche  est trop court️ 🙅‍ \nErreur: $typeDerreur', context, 5);
+      break;
+    case "NoSuchElementException":
+    //Aucune idéé ce que ca fait
+      break;
+    case "UnkownError":
+      afficherMessage('Erreur inconnu 🤔', context, 8);
+      break;
+    default:
+      break;
+  }
 }
