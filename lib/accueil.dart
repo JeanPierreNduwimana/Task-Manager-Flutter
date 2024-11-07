@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:tp1_flutter/consultation_tache.dart';
 import 'package:tp1_flutter/lib_http.dart';
@@ -13,6 +14,10 @@ class Accueil extends StatefulWidget {
   State<Accueil> createState() => AccueilState();
 }
 
+bool is_LoadingList = false;
+bool connection_error = false;
+bool isLodingPhoto = false;
+
 class AccueilState extends State<Accueil> {
 
   List<HomeItemPhotoResponse> taches= [];
@@ -25,11 +30,23 @@ class AccueilState extends State<Accueil> {
   }
 
   Future<List<HomeItemPhotoResponse>> getListTaches() async{
+    setStateLoadingList(true);
+    try{
+      taches = await getHomeItemResponse();
+    }catch(e){
+      if(e is DioException){
+        if(e.type == DioExceptionType.connectionError){
+          connection_error = true;
+          erreurServeur("connectionError", context);
+          Future.delayed(const Duration(seconds: 2), (){
+            setStateLoadingList(false);});
+        }
+      }
+    }finally{
+      setStateLoadingList(false);
+      return taches;
+    }
 
-
-    taches = await getHomeItemResponse();
-    setState(() {});
-    return taches;
   }
 
   Widget buildBody(String username){
@@ -38,11 +55,22 @@ class AccueilState extends State<Accueil> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Aucune tâche disponible'),
+            connection_error? const Text('Erreur de connection') : is_LoadingList? const Text('Chargement de la liste des taches') : const Text('Aucune tâche disponible'),
             ElevatedButton(onPressed: (){
-              Navigator.pushNamed(context, '/creationtache', arguments: username);
+              if(connection_error){
+                connection_error = false;
+                getListTaches();
+              }else{
+                Navigator.pushNamed(context, '/creationtache', arguments: username);
+              }
             },
-            child: const Text('Ajouter une tâche'))
+            child: connection_error? const Text('Recharger')
+              : (is_LoadingList)? const SizedBox(
+              height: 20, width: 20,
+              child: CircularProgressIndicator(
+                color: Colors.white,
+              ),
+            ) : const Text('Ajouter une tâche'))
           ],
         ),
       );
@@ -89,8 +117,11 @@ class AccueilState extends State<Accueil> {
                           ],
                         ),
                       ),
-                      (tache.photoId != 0)? Container( margin: const EdgeInsets.only(right: 12),
-                        child: downloadImage(tache.photoId)) : const SizedBox(),
+                      (tache.photoId != 0)
+                          ? Container(
+                            margin: const EdgeInsets.only(right: 12),
+                            child: downloadImage(tache.photoId))
+                          : const SizedBox(),
                     ],
                   ), ),
                   onTap: (){
@@ -125,6 +156,12 @@ class AccueilState extends State<Accueil> {
       ),
     );
   }
+
+  void setStateLoadingList(bool _isLoadingList){
+    setState(() {
+      is_LoadingList = _isLoadingList;
+    });
+  }
 }
 
 String formattageDate( String isoDate){
@@ -139,3 +176,4 @@ String formattageDate( String isoDate){
   // retourne la date formatée
   return formattedDate;
 }
+

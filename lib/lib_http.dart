@@ -176,6 +176,8 @@ void erreurServeur(String typeDerreur, BuildContext context){
     case "UnkownError":
       afficherMessage('Erreur inconnu 🤔', context, 8);
       break;
+    case "connectionError":
+      afficherMessage('Désolé il n\'y a pas de connection 😣 \n Veuillez vérifiez votre réseau', context, 2);
     default:
       break;
   }

@@ -6,14 +6,20 @@ import 'package:tp1_flutter/lib_http.dart';
 import 'package:tp1_flutter/transfer.dart';
 
 
-class Connexion extends StatelessWidget {
-  const Connexion({super.key});
+final TextEditingController username_controller = TextEditingController();
+final TextEditingController password_controller = TextEditingController();
+bool is_Enabled = true;
+bool is_loading = false;
 
-  // This widget is the root of your application.
+class Connexion extends StatefulWidget {
+  const Connexion({super.key});
+  @override
+  State<Connexion> createState() => _ConnexionState();
+}
+class _ConnexionState extends State<Connexion> {
   @override
   Widget build(BuildContext context) {
-    final TextEditingController username_controller = TextEditingController();
-    final TextEditingController password_controller = TextEditingController();
+
     return Scaffold(
 
       appBar: AppBar(
@@ -49,16 +55,35 @@ class Connexion extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    ElevatedButton(
-                      child: const Text('Inscription'),
-                      onPressed: () async {
-                        Navigator.pushNamed(context, '/inscription');                  },
+                    Expanded(
+                      flex: 1,
+                      child: ElevatedButton(
+                        child: const Text('Inscription'),
+                        onPressed: () async {
+                          Navigator.pushNamed(context, '/inscription');                  },
+                      ),
                     ),
-                    ElevatedButton(
-                      child: const Text('Connexion'),
-                      onPressed: () async {
-                        connexion(username_controller.text, password_controller.text, context); //HTTP REQUEST
-                      },
+                    const SizedBox(width: 40,),
+                    Expanded(
+                      flex: 1,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          if(is_Enabled){
+                            connexion(username_controller.text, password_controller.text, context); //HTTP REQUEST
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          elevation: is_Enabled? 2 : 0,
+                        ),
+                        child: is_loading
+                            ? const SizedBox(
+                          height: 20, width: 20,
+                              child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                ),
+                            )
+                            : const Text('Connexion'),
+                      ),
                     )
                   ],
                 )
@@ -70,13 +95,19 @@ class Connexion extends StatelessWidget {
     );
   }
 
+
   void connexion(String username, String password, BuildContext context) async{
+    setState_button(false, true);
     SignInRequest req = SignInRequest();
     req.username = username;
     req.password = password;
 
     if(username == "" || password == ""){
       afficherMessage("Aucun des champs ne peut être vide ☹", context, 2);
+      Future.delayed(const Duration(seconds: 2), (){
+        setState(() {
+          setState_button(true, false);  // Re-enable the button after 2 seconds
+        });});
     }else {
       var response;
       try{
@@ -85,9 +116,23 @@ class Connexion extends StatelessWidget {
         if(e is DioException){
           if(e.response?.data != null){
             erreurServeur(e.response!.data.toString(), context);
+            Future.delayed(const Duration(seconds: 5), (){
+              setState(() {
+                is_Enabled = true;  // Re-enable the button after 2 seconds
+              });});
           }
-        }else{
+          if(e.type == DioExceptionType.connectionError){
+            erreurServeur("connectionError", context);
+            Future.delayed(const Duration(seconds: 2), (){
+              setState_button(true, false);});
+          }
+        }
+        else{
           erreurServeur("UnkownError", context);
+          Future.delayed(const Duration(seconds: 2), (){
+            setState(() {
+              setState_button(true, false);  // Re-enable the button after 2 seconds
+            });});
         }
       }finally{
         String name = response.username;
@@ -95,6 +140,13 @@ class Connexion extends StatelessWidget {
         afficherMessage('Bienvenue ${response.username} 🎉', context, 8);
       }
     }
+  }
+
+  void setState_button(bool _is_Enabled, bool _is_loading){
+    setState(() {
+      is_Enabled = _is_Enabled;
+      is_loading = _is_loading;
+    });
   }
 
 

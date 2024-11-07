@@ -17,6 +17,8 @@ class _InscriptionPageState extends State<InscriptionPage> {
   final TextEditingController password_controller = TextEditingController();
   final TextEditingController confirm_password_controller = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool is_Enabled = true;
+  bool is_loading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -77,19 +79,35 @@ class _InscriptionPageState extends State<InscriptionPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      ElevatedButton(
-                        child: const Text('Connexion'),
-                        onPressed: () async{
-                          Navigator.pushNamed(context, '/connexion');
-                        },
+                      Expanded(
+                        flex: 1,
+                        child: ElevatedButton(
+                          child: const Text('Inscription'),
+                          onPressed: () async {
+                            Navigator.pushNamed(context, '/inscription');                  },
+                        ),
                       ),
-                      ElevatedButton(
-                        child: const Text('Inscription'),
-                        onPressed: () {
-                          //Navigator.pushNamed(context, '/connexion');
-                          inscription(username_controller.text, password_controller.text, confirm_password_controller.text, context); //HTTP REQUEST
-
-                        },
+                      const SizedBox(width: 40,),
+                      Expanded(
+                        flex: 1,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            if(is_Enabled){
+                              inscription(username_controller.text, password_controller.text, confirm_password_controller.text, context); //HTTP REQUEST
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            elevation: is_Enabled? 2 : 0,
+                          ),
+                          child: is_loading
+                              ? const SizedBox(
+                            height: 20, width: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                          )
+                              : const Text('Connexion'),
+                        ),
                       )
                     ],
                   )
@@ -105,10 +123,10 @@ class _InscriptionPageState extends State<InscriptionPage> {
   bool passwordError = false;
 
   void inscription(String username, String password,String confirmpassword, BuildContext context) async {
+    setState_button(false,true);
     SignUpRequest req = SignUpRequest();
     req.username = username;
     req.password = password;
-
     if (!validation(username, password, confirmpassword)) {
 
       var response;
@@ -118,6 +136,15 @@ class _InscriptionPageState extends State<InscriptionPage> {
         if(e is DioException){
           if(e.response?.data != null){
             erreurServeur(e.response!.data.toString(), context);
+            Future.delayed(const Duration(seconds: 5), (){
+              setState(() {
+                is_Enabled = true;  // Re-enable the button after 2 seconds
+              });});
+          }
+          if(e.type == DioExceptionType.connectionError){
+            erreurServeur("connectionError", context);
+            Future.delayed(const Duration(seconds: 2), (){
+                setState_button(true,false);;});
           }
         }else{
           erreurServeur("UnkownError", context);
@@ -126,6 +153,9 @@ class _InscriptionPageState extends State<InscriptionPage> {
         Navigator.pushNamed(context, '/accueil', arguments: response.username);
         afficherMessage('Bienvenue ${response.username} 🎉', context, 8);
       }
+    }else{
+      Future.delayed(const Duration(seconds: 2), (){
+      setState_button(true,false);});
     }
   }
 
@@ -146,8 +176,14 @@ class _InscriptionPageState extends State<InscriptionPage> {
       afficherMessage("Mot de passe non-identiques", context, 2);
       return true;
     }
-
     return false;
+  }
 
+  void setState_button(bool _is_Enabled, bool _is_Loading){
+
+    setState(() {
+      is_Enabled = _is_Enabled;
+      is_loading = _is_Loading;
+    });
   }
 }
