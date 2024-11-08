@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tp1_flutter/lib_http.dart';
 import 'package:tp1_flutter/transfer.dart';
 
@@ -19,11 +20,12 @@ class Connexion extends StatefulWidget {
   State<Connexion> createState() => _ConnexionState();
 }
 class _ConnexionState extends State<Connexion> {
-
+  bool fastConnexionActive = false;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    fastConnexion();
     is_Enabled = true;
     is_loading = false;
   }
@@ -38,7 +40,18 @@ class _ConnexionState extends State<Connexion> {
         backgroundColor: Colors.deepPurple,
       ),
 
-      body: Center(
+      body: fastConnexionActive 
+      ? Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset('assets/images/vipredirect.gif'),
+            const SizedBox(height: 4,),
+            const Text('Patientez, vous allez être rediriger...', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),)
+          ],
+        ),
+      )
+      : Center(
           child: Padding(
             padding: const EdgeInsets.all(48.0),
             child: Column(
@@ -129,10 +142,8 @@ class _ConnexionState extends State<Connexion> {
         if(e is DioException){
           if(e.response?.data != null){
             erreurServeur(e.response!.data.toString(), context);
-            Future.delayed(const Duration(seconds: 5), (){
-              setState(() {
-                is_Enabled = true;  // Re-enable the button after 2 seconds
-              });});
+            Future.delayed(const Duration(seconds: 3), (){
+              setState_button(true, false);});
           }
           if(e.type == DioExceptionType.connectionError){
             erreurServeur("connectionError", context);
@@ -149,9 +160,38 @@ class _ConnexionState extends State<Connexion> {
         }
       }finally{
         String name = response.username;
+        final prefs = await SharedPreferences.getInstance();
+        prefs.setString('username', response.username);
+        prefs.setString('password', password);
         Navigator.pushReplacementNamed(context, '/accueil', arguments: name);
         afficherMessage('Bienvenue ${response.username} 🎉', context, 3);
       }
+    }
+  }
+
+  void fastConnexion() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? username = prefs.getString('username');
+    String? password = prefs.getString('password');
+
+    if (username != null && password != null) {
+      setState(() {
+        fastConnexionActive = true;
+      });
+
+      SignInRequest req = SignInRequest();
+      req.username = username;
+      req.password = password;
+      var response = await signin(req);
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString('username', response.username);
+      prefs.setString('password', password);
+      String name = response.username;
+      fastConnexionActive = false;
+      Future.delayed(const Duration(seconds: 4), (){
+        Navigator.pushReplacementNamed(context, '/accueil', arguments: name);
+        afficherMessage('Bienvenue ${response.username} 🎉', context, 3);
+        });
     }
   }
 

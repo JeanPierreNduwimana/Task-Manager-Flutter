@@ -51,14 +51,15 @@ class _ConsultationState extends State<ConsultationTache>  with WidgetsBindingOb
       ),
       body: buildBody(),
       drawer: LeTiroir(username: widget.username),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: !isLoading
+      ? FloatingActionButton(
         tooltip: 'Increment',
         onPressed: (){
           WidgetsBinding.instance.removeObserver(this); //On arreter l'observer
           Navigator.pushNamed(context, '/accueil', arguments: widget.username);
         },
         child: const Icon(Icons.home, color: Colors.white, size: 28),
-      ),
+      ) : const SizedBox(),
     );
   }
 
@@ -105,9 +106,6 @@ class _ConsultationState extends State<ConsultationTache>  with WidgetsBindingOb
     try{
       tache = await getdetailsTache(id);
     }finally{
-      //if(tache.photoId != 0) {
-      //  image = Image.network(ImageUrl(tache.photoId),height: 80, width: 80, fit: BoxFit.cover);
-      //}
       _sliderValue = double.parse(tache.percentageDone.toString());
       setState(() {
         isLoading = false;
@@ -221,9 +219,8 @@ class _ConsultationState extends State<ConsultationTache>  with WidgetsBindingOb
                   ),
                   borderRadius: BorderRadius.circular(12.0),
                 ),
-                child: localImageAvailable
-                ? image
-                : Container(
+                child: (!localImageAvailable && tache.photoId != 0)
+                ? Container(
                   decoration: const BoxDecoration(
                       image: DecorationImage(
                           image: AssetImage('assets/images/tenor.gif',)
@@ -240,6 +237,7 @@ class _ConsultationState extends State<ConsultationTache>  with WidgetsBindingOb
                       }
                   ),
                 )
+                : image
               ),
             ),
             const SizedBox(height: 40,),

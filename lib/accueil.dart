@@ -51,14 +51,14 @@ class AccueilState extends State<Accueil> with WidgetsBindingObserver {
         body: buildBody(username),
       drawer: LeTiroir(username: username),
 
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: !is_LoadingList?  FloatingActionButton(
         tooltip: 'Increment',
         onPressed: (){
           WidgetsBinding.instance.removeObserver(this); //On arreter l'observer
           Navigator.pushNamed(context, '/creationtache', arguments: username);
         },
         child: const Icon(Icons.add, color: Colors.white, size: 28),
-      ),
+      ) : const SizedBox(),
     );
   }
 
