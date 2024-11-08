@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:tp1_flutter/tiroir_nav.dart';
 import 'package:tp1_flutter/transfer.dart';
 
+import 'app_service.dart';
 import 'lib_http.dart';
 
 
@@ -20,27 +21,75 @@ class ConsultationTache extends StatefulWidget {
   State<ConsultationTache> createState() => _ConsultationState();
 }
 
-class _ConsultationState extends State<ConsultationTache> {
+class _ConsultationState extends State<ConsultationTache>  with WidgetsBindingObserver{
+
   TaskDetailPhotoResponse tache = new TaskDetailPhotoResponse();
   double _sliderValue = 0;
   String imagePath = "";
   XFile? pickedImage;
-  Image image = new Image.asset(
+  Image image = Image.asset(
     'assets/images/add_photo.png',
     semanticLabel:  'Image de la tache');
+  bool isLoading = false;
+  bool localImageAvailable = false;
+  bool isuploading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this); //Ajout d'un oberver
+    print('Ajout d\'un oberver');
+    DetailsTache(widget.id);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Consultation Tache'),
+        backgroundColor: Colors.deepPurple,
+      ),
+      body: buildBody(),
+      drawer: LeTiroir(username: widget.username),
+      floatingActionButton: FloatingActionButton(
+        tooltip: 'Increment',
+        onPressed: (){
+          WidgetsBinding.instance.removeObserver(this); //On arreter l'observer
+          Navigator.pushNamed(context, '/accueil', arguments: widget.username);
+        },
+        child: const Icon(Icons.home, color: Colors.white, size: 28),
+      ),
+    );
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if(state == AppLifecycleState.resumed){
+      print('resumed');
+      if(!isuploading){
+        DetailsTache(widget.id);
+      }
+    }
+    if(state == AppLifecycleState.paused){
+      print('paused');
+      tache = TaskDetailPhotoResponse();
+    }
+  }
 
   void getImage() async{
-
+    isuploading = true;
     ImagePicker picker = ImagePicker();
     pickedImage = await picker.pickImage(source: ImageSource.gallery);
     imagePath = pickedImage!.path;
 
     if(imagePath != ""){
       image = Image.file(File(imagePath),fit: BoxFit.cover,);
+      localImageAvailable = true;
     }
     setState(() {});
-  }
+    isuploading = false;
 
+  }
   Future<void> sendImage(String imagePath, int taskId) async{
     FormData formData = FormData.fromMap({
       "file" : await MultipartFile.fromFile(imagePath, filename: pickedImage!.name),
@@ -48,144 +97,171 @@ class _ConsultationState extends State<ConsultationTache> {
     });
     await uploadImage(formData);
   }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    DetailsTache(this.widget.id);
-  }
-
   Future<TaskDetailPhotoResponse> DetailsTache(String id) async{
-
-    tache = await getdetailsTache(id);
-    if(tache.photoId != 0) {
-      image = Image.network(ImageUrl(tache.photoId),height: 80, width: 80, fit: BoxFit.cover);
+    setState(() {
+      localImageAvailable = false;
+      isLoading = true;
+    });
+    try{
+      tache = await getdetailsTache(id);
+    }finally{
+      //if(tache.photoId != 0) {
+      //  image = Image.network(ImageUrl(tache.photoId),height: 80, width: 80, fit: BoxFit.cover);
+      //}
+      _sliderValue = double.parse(tache.percentageDone.toString());
+      setState(() {
+        isLoading = false;
+      });
+      return tache;
     }
-    _sliderValue = double.parse(tache.percentageDone.toString());
-    setState(() {});
-    return tache;
+
+
   }
-
   Future<void> MiseAJourProgression(String id,String valeur) async {
-     var response = await updateProgress(id, valeur);
-     if(response == '200'){
-       DetailsTache(id);
-     }
-
+    var response = await updateProgress(id, valeur);
+    if(response == '200'){
+      DetailsTache(id);
+    }
   }
 
   Widget buildBody(){
-    return SingleChildScrollView(
-      child: Center (
-          child: Column(
-            children: [
-
-              const SizedBox(height: 30,),
-              SizedBox(
-                child: Column(
-                  children: [
-                    Text(tache.name,
-                      style: const TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
-                      ),),
-                    Text( formattageDate(tache.deadline)),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 100,),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+    return isLoading
+      ? Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset('assets/images/tenor.gif', height: 80, width: 80,),
+            const Text('Chargement...'),
+          ],
+        ),
+      )
+      : SingleChildScrollView(
+        child: Center (
+        child: Column(
+          children: [
+            const SizedBox(height: 30,),
+            SizedBox(
+              child: Column(
                 children: [
-                  Container(
-                    margin: const EdgeInsets.only(left: 16.0),
-                    padding: const EdgeInsets.all(24.0),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.black38, // Border color
-                        width: 1.0,// Border width
-                      ),
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    child:  Expanded(
-                      child: Column(
-                        children: [
-                          Text('${tache.percentageTimeSpent} %',
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),),
-                          Text('Temps utilisé'),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const Expanded(child: SizedBox(),),
-                  Container(
-                    margin: EdgeInsets.only(right: 16.0),
-                    padding: EdgeInsets.all(24.0),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.black38, // Border color
-                        width: 1.0,// Border width
-                      ),
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    child: Expanded(
-                      child: Column(
-                        children: [
-                          Text('${tache.percentageDone} %',
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),),
-                          const Text('Progression'),
-                        ],
-                      ),
-                    ),
-                  ),
+                  Text(tache.name,
+                    style: const TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                    ),),
+                  Text( formattageDate(tache.deadline)),
                 ],
               ),
-              const SizedBox(height: 40,),
-              GestureDetector(
-                onTap: (){
-                  getImage();
-                },
-                child:  Container(
-                  height: 100,
-                  width: 100,
+            ),
+            const SizedBox(height: 100,),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(left: 16.0),
+                  padding: const EdgeInsets.all(24.0),
                   decoration: BoxDecoration(
-                    color: Colors.black26,
                     border: Border.all(
-                      color: Colors.black12, // Border color
+                      color: Colors.black38, // Border color
                       width: 1.0,// Border width
                     ),
                     borderRadius: BorderRadius.circular(12.0),
                   ),
-                  child: image,
+                  child:  Expanded(
+                    child: Column(
+                      children: [
+                        Text('${tache.percentageTimeSpent} %',
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),),
+                        Text('Temps utilisé'),
+                      ],
+                    ),
+                  ),
                 ),
+                const Expanded(child: SizedBox(),),
+                Container(
+                  margin: EdgeInsets.only(right: 16.0),
+                  padding: EdgeInsets.all(24.0),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.black38, // Border color
+                      width: 1.0,// Border width
+                    ),
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  child: Expanded(
+                    child: Column(
+                      children: [
+                        Text('${tache.percentageDone} %',
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),),
+                        const Text('Progression'),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 40,),
+            GestureDetector(
+              onTap: (){
+                getImage();
+              },
+              child:  Container(
+                height: 100,
+                width: 100,
+                decoration: BoxDecoration(
+                  color: Colors.black26,
+                  border: Border.all(
+                    color: Colors.black12, // Border color
+                    width: 1.0,// Border width
+                  ),
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                child: localImageAvailable
+                ? image
+                : Container(
+                  decoration: const BoxDecoration(
+                      image: DecorationImage(
+                          image: AssetImage('assets/images/tenor.gif',)
+                      )
+                  ),
+                  child: Image.network(
+                      ImageUrl(tache.photoId),
+                      height: 80, width: 80, fit: BoxFit.cover,
+                      loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress){
+                        if(loadingProgress == null){
+                          return child;
+                        }
+                        return const SizedBox();
+                      }
+                  ),
+                )
               ),
-              const SizedBox(height: 40,),
-              Slider(
-                  value: _sliderValue,
-                  min: 0,
-                  max: 100,
-                  divisions: 5,
-                  label: _sliderValue.round().toString(),
-                  onChanged: (double num){
-                    setState(() {
-                      _sliderValue = num;
-                    });
+            ),
+            const SizedBox(height: 40,),
+            Slider(
+                value: _sliderValue,
+                min: 0,
+                max: 100,
+                divisions: 5,
+                label: _sliderValue.round().toString(),
+                onChanged: (double num){
+                  setState(() {
+                    _sliderValue = num;
+                  });
 
-                  }),
-              const SizedBox(height: 40,),
-              ElevatedButton(onPressed:() async {btnMiseAJour();}, child: const Text('Mettre à jour ma progression')),
-              ElevatedButton( onPressed:() async{btnSupprimer();}, child: const Text('Supprimer')),
-            ],
-          ),
+                }),
+            const SizedBox(height: 40,),
+            ElevatedButton(onPressed:() async {btnMiseAJour();}, child: const Text('Mettre à jour ma progression')),
+            ElevatedButton( onPressed:() async{btnSupprimer();}, child: const Text('Supprimer')),
+          ],
         ),
-    );
+            ),
+      );
   }
 
   void btnMiseAJour() async {
@@ -208,47 +284,11 @@ class _ConsultationState extends State<ConsultationTache> {
     try{
       await removeTask(tache);
     }finally {
+      WidgetsBinding.instance.removeObserver(this); //On arreter l'observer
       Navigator.pushNamed(context, '/accueil', arguments: this.widget.username);
       afficherMessage("La tache ${tache.name} est supprimé 🔪", context,3);
     }
   }
-
-  @override
-  Widget build(BuildContext context) {
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Consultation Tache'),
-        backgroundColor: Colors.deepPurple,
-      ),
-      body: buildBody(),
-      drawer: LeTiroir(username: this.widget.username),
-      floatingActionButton: FloatingActionButton(
-        //backgroundColor: const Color.fromRGBO(82, 170, 94, 1.0),
-        tooltip: 'Increment',
-        onPressed: (){
-          Navigator.pushNamed(context, '/accueil', arguments: this.widget.username);
-        },
-        child: const Icon(Icons.home, color: Colors.white, size: 28),
-      ),
-    );
-  }
-
-}
-
-String formattageDate( String isoDate){
-  if(isoDate == ''){
-    return '';
-  }
-
-  // Convertir la chaîne en objet DateTime
-  DateTime dateTime = DateTime.parse(isoDate);
-
-  // Formater la date en 'YYYY-MM-DD'
-  String formattedDate = "${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}";
-
-  // retourne la date formatée
-  return formattedDate;
 }
 
 

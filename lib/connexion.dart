@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:tp1_flutter/lib_http.dart';
 import 'package:tp1_flutter/transfer.dart';
 
+import 'app_service.dart';
+
 
 final TextEditingController username_controller = TextEditingController();
 final TextEditingController password_controller = TextEditingController();

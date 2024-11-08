@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:tp1_flutter/transfer.dart';
 
+import 'app_service.dart';
 import 'lib_http.dart';
 
 class InscriptionPage extends StatefulWidget {
