@@ -1,0 +1,20 @@
+{
+  "connection" : "Se Connecter",
+  "inscription" : "S'inscrire",
+  "deconnexion" : "Déconnexion",
+  "username" : "nom d'utilisateur",
+  "password" : "Mot de passe",
+  "confirmpassword" : "Confirme ton mot de passe",
+  "loadindTaskList" : "chargement de vos taches...",
+  "home" : "Accueil",
+  "taskDetail" : "Consultation de tache",
+  "timeUsed" : "Temps utilisé",
+  "progression" : "Progression",
+  "updateProgression" : "Mise à jour de progression",
+  "delete" : "Supprimer",
+  "createTask" : "Créér votre tâche",
+  "create" : "Créer",
+  "vipredirect" : "Patientez, vous allez être rediriger...",
+  "emptyfields" : "Aucun des champs ne peut être vide ☹",
+  "welcome" : "Bienvenue"
+}

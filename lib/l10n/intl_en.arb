@@ -1,0 +1,20 @@
+{
+  "connection" : "Log In",
+  "inscription" : "Register",
+  "deconnexion" : "Log Out",
+  "username" : "Username",
+  "password" : "Password",
+  "confirmpassword" : "Confirm your password",
+  "loadindTaskList" : "Loading your tasks...",
+  "home" : "Home",
+  "taskDetail" : "Task Detail",
+  "timeUsed" : "Time Used",
+  "progression" : "Progression",
+  "updateProgression" : "Update Progression",
+  "delete" : "Delete",
+  "createTask" : "Create your task",
+  "create" : "Create",
+  "vipredirect" : "Direct access...",
+  "emptyfields" : "No field can be empty ☹",
+  "welcome" : "Welcome"
+}

@@ -5,8 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tp1_flutter/lib_http.dart';
 import 'package:tp1_flutter/transfer.dart';
-
 import 'app_service.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'generated/l10n.dart';
 
 
 final TextEditingController username_controller = TextEditingController();
@@ -16,15 +17,19 @@ bool is_loading = false;
 
 class Connexion extends StatefulWidget {
   const Connexion({super.key});
+
   @override
   State<Connexion> createState() => _ConnexionState();
 }
+
 class _ConnexionState extends State<Connexion> {
   bool fastConnexionActive = false;
+  String title = "";
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    S.load(const Locale('en'));
     fastConnexion();
     is_Enabled = true;
     is_loading = false;
@@ -33,21 +38,31 @@ class _ConnexionState extends State<Connexion> {
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
+    return MaterialApp(
+        localizationsDelegates: const [
+          S.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('en', ''), // English, no country code
+          Locale('fr', ''), // Spanish, no country code
+        ],
 
-      appBar: AppBar(
-        title: const Text('Connexion'),
-        backgroundColor: Colors.deepPurple,
-      ),
-
-      body: fastConnexionActive 
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text(S.of(context)!.connection),
+          backgroundColor: Colors.deepPurple,
+        ),
+      body: fastConnexionActive
       ? Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset('assets/images/vipredirect.gif'),
             const SizedBox(height: 4,),
-            const Text('Patientez, vous allez être rediriger...', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),)
+            Text(S.of(context)!.vipredirect, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),)
           ],
         ),
       )
@@ -56,13 +71,13 @@ class _ConnexionState extends State<Connexion> {
             padding: const EdgeInsets.all(48.0),
             child: Column(
               children: [
-                const Text('Connexion'),
+                Text(S.of(context)!.connection),
                 TextField(
                   controller: username_controller,
                   keyboardType: TextInputType.name,
                   maxLength: 16,
-                  decoration: const InputDecoration(
-                      hintText: 'Username',
+                  decoration:  InputDecoration(
+                      hintText: S.of(context)!.username,
                       hintStyle: TextStyle(color: Colors.black38)
                   ),
                 ),
@@ -70,8 +85,8 @@ class _ConnexionState extends State<Connexion> {
                   controller: password_controller,
                   obscureText: true,
                   keyboardType: TextInputType.visiblePassword,
-                  decoration: const InputDecoration(
-                      hintText: 'Password',
+                  decoration: InputDecoration(
+                      hintText: S.of(context)!.password,
                       hintStyle: TextStyle(color: Colors.black38)
                   ),
                 ),
@@ -82,9 +97,9 @@ class _ConnexionState extends State<Connexion> {
                     Expanded(
                       flex: 1,
                       child: ElevatedButton(
-                        child: const Text('Inscription'),
+                        child: Text(S.of(context)!.inscription),
                         onPressed: () async {
-                          Navigator.pushNamed(context, '/inscription');                  },
+                          Navigator.pushNamed(context, '/inscription'); },
                       ),
                     ),
                     const SizedBox(width: 40,),
@@ -108,7 +123,7 @@ class _ConnexionState extends State<Connexion> {
                                   color: Colors.white,
                                 ),
                             )
-                            : const Text('Connexion'),
+                            :  Text(S.of(context)!.connection),
                       ),
                     )
                   ],
@@ -118,6 +133,7 @@ class _ConnexionState extends State<Connexion> {
             ),
           )
       ),
+    )
     );
   }
 
@@ -129,7 +145,7 @@ class _ConnexionState extends State<Connexion> {
     req.password = password;
 
     if(username == "" || password == ""){
-      afficherMessage("Aucun des champs ne peut être vide ☹", context, 3);
+      afficherMessage(S.of(context)!.emptyfields, context, 3);
       Future.delayed(const Duration(seconds: 2), (){
         setState(() {
           setState_button(true, false);  // Re-enable the button after 2 seconds
@@ -190,7 +206,7 @@ class _ConnexionState extends State<Connexion> {
       fastConnexionActive = false;
       Future.delayed(const Duration(seconds: 4), (){
         Navigator.pushReplacementNamed(context, '/accueil', arguments: name);
-        afficherMessage('Bienvenue ${response.username} 🎉', context, 3);
+        afficherMessage('${S.of(context)!.welcome} ${response.username} 🎉', context, 3);
         });
     }
   }
