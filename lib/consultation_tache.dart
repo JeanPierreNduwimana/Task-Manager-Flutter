@@ -60,7 +60,7 @@ class _ConsultationState extends State<ConsultationTache> {
 
     tache = await getdetailsTache(id);
     if(tache.photoId != 0) {
-      image = downloadImage(tache.photoId);
+      image = Image.network(ImageUrl(tache.photoId),height: 80, width: 80, fit: BoxFit.cover);
     }
     _sliderValue = double.parse(tache.percentageDone.toString());
     setState(() {});
@@ -76,114 +76,116 @@ class _ConsultationState extends State<ConsultationTache> {
   }
 
   Widget buildBody(){
-    return Center (
-        child: Column(
-          children: [
+    return SingleChildScrollView(
+      child: Center (
+          child: Column(
+            children: [
 
-            const SizedBox(height: 30,),
-            SizedBox(
-              child: Column(
+              const SizedBox(height: 30,),
+              SizedBox(
+                child: Column(
+                  children: [
+                    Text(tache.name,
+                      style: const TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                      ),),
+                    Text( formattageDate(tache.deadline)),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 100,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(tache.name,
-                    style: const TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
-                    ),),
-                  Text( formattageDate(tache.deadline)),
+                  Container(
+                    margin: const EdgeInsets.only(left: 16.0),
+                    padding: const EdgeInsets.all(24.0),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.black38, // Border color
+                        width: 1.0,// Border width
+                      ),
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    child:  Expanded(
+                      child: Column(
+                        children: [
+                          Text('${tache.percentageTimeSpent} %',
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),),
+                          Text('Temps utilisé'),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const Expanded(child: SizedBox(),),
+                  Container(
+                    margin: EdgeInsets.only(right: 16.0),
+                    padding: EdgeInsets.all(24.0),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.black38, // Border color
+                        width: 1.0,// Border width
+                      ),
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    child: Expanded(
+                      child: Column(
+                        children: [
+                          Text('${tache.percentageDone} %',
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),),
+                          const Text('Progression'),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
-            ),
-            const SizedBox(height: 100,),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(left: 16.0),
-                  padding: const EdgeInsets.all(24.0),
+              const SizedBox(height: 40,),
+              GestureDetector(
+                onTap: (){
+                  getImage();
+                },
+                child:  Container(
+                  height: 100,
+                  width: 100,
                   decoration: BoxDecoration(
+                    color: Colors.black26,
                     border: Border.all(
-                      color: Colors.black38, // Border color
+                      color: Colors.black12, // Border color
                       width: 1.0,// Border width
                     ),
                     borderRadius: BorderRadius.circular(12.0),
                   ),
-                  child:  Expanded(
-                    child: Column(
-                      children: [
-                        Text('${tache.percentageTimeSpent} %',
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),),
-                        Text('Temps utilisé'),
-                      ],
-                    ),
-                  ),
+                  child: image,
                 ),
-                const Expanded(child: SizedBox(),),
-                Container(
-                  margin: EdgeInsets.only(right: 16.0),
-                  padding: EdgeInsets.all(24.0),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.black38, // Border color
-                      width: 1.0,// Border width
-                    ),
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  child: Expanded(
-                    child: Column(
-                      children: [
-                        Text('${tache.percentageDone} %',
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),),
-                        const Text('Progression'),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 40,),
-            GestureDetector(
-              onTap: (){
-                getImage();
-              },
-              child:  Container(
-                height: 100,
-                width: 100,
-                decoration: BoxDecoration(
-                  color: Colors.black26,
-                  border: Border.all(
-                    color: Colors.black12, // Border color
-                    width: 1.0,// Border width
-                  ),
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-                child: image,
               ),
-            ),
-            const SizedBox(height: 40,),
-            Slider(
-                value: _sliderValue,
-                min: 0,
-                max: 100,
-                divisions: 5,
-                label: _sliderValue.round().toString(),
-                onChanged: (double num){
-                  setState(() {
-                    _sliderValue = num;
-                  });
+              const SizedBox(height: 40,),
+              Slider(
+                  value: _sliderValue,
+                  min: 0,
+                  max: 100,
+                  divisions: 5,
+                  label: _sliderValue.round().toString(),
+                  onChanged: (double num){
+                    setState(() {
+                      _sliderValue = num;
+                    });
 
-                }),
-            const SizedBox(height: 40,),
-            ElevatedButton(onPressed:() async {btnMiseAJour();}, child: const Text('Mettre à jour ma progression')),
-            ElevatedButton( onPressed:() async{btnSupprimer();}, child: const Text('Supprimer')),
-          ],
+                  }),
+              const SizedBox(height: 40,),
+              ElevatedButton(onPressed:() async {btnMiseAJour();}, child: const Text('Mettre à jour ma progression')),
+              ElevatedButton( onPressed:() async{btnSupprimer();}, child: const Text('Supprimer')),
+            ],
+          ),
         ),
-      );
+    );
   }
 
   void btnMiseAJour() async {
@@ -198,7 +200,7 @@ class _ConsultationState extends State<ConsultationTache> {
         MiseAJourProgression(tache.id.toString(), _sliderValue.round().toString());
       }
     }finally{
-      afficherMessage("La tache est mise à jour 👌", context,5);
+      afficherMessage("La tache est mise à jour 👌", context,3);
     }
   }
 
@@ -207,7 +209,7 @@ class _ConsultationState extends State<ConsultationTache> {
       await removeTask(tache);
     }finally {
       Navigator.pushNamed(context, '/accueil', arguments: this.widget.username);
-      afficherMessage("La tache ${tache.name} est supprimé 🔪", context,5);
+      afficherMessage("La tache ${tache.name} est supprimé 🔪", context,3);
     }
   }
 

@@ -12,11 +12,6 @@ class CreationTache extends StatefulWidget {
   State<CreationTache> createState() => _CreationTacheState();
 }
 
-final _formKey = GlobalKey<FormState>();
-final TextEditingController tache_nom_controller = TextEditingController();
-final TextEditingController annee_controller = TextEditingController();
-final TextEditingController mois_controller = TextEditingController();
-final TextEditingController jour_controller = TextEditingController();
 
 
 bool errorannee = false;
@@ -27,6 +22,12 @@ bool errornom = false;
 class _CreationTacheState extends State<CreationTache> {
 
 
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController tache_nom_controller = TextEditingController();
+  final TextEditingController annee_controller = TextEditingController();
+  final TextEditingController mois_controller = TextEditingController();
+  final TextEditingController jour_controller = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     final String username = ModalRoute.of(context)!.settings.arguments as String;
@@ -36,109 +37,111 @@ class _CreationTacheState extends State<CreationTache> {
         backgroundColor: Colors.deepPurple,
       ),
 
-      body: Center(
-        child: Form(
-          key: _formKey,
-          child: Padding(
-            padding: const EdgeInsets.all(48.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Text('Create your task', style: TextStyle(fontSize: 24)),
-                SizedBox(height: 16),
-                TextFormField(
-                  controller: tache_nom_controller,
-                  keyboardType: TextInputType.name,
-                  maxLength: 16,
-                  decoration: const InputDecoration(
-                      hintText: 'Task name',
-                      hintStyle: TextStyle(color: Colors.black38)
-                  ),
-                  validator: (value) {
-                    if (errornom) {
-                      return 'champs vide';
-                    }
-                    return null;
-                  },
-              ),
-              SizedBox(height: 16),
-              Row(
+      body: SingleChildScrollView(
+        child: Center(
+          child: Form(
+            key: _formKey,
+            child: Padding(
+              padding: const EdgeInsets.all(48.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                Expanded(
-                  child: TextFormField(
-                    controller: annee_controller,
-                    keyboardType: TextInputType.number,
-                    maxLength: 4,
-                    textAlign: TextAlign.center,
+                  const Text('Create your task', style: TextStyle(fontSize: 24)),
+                  SizedBox(height: 16),
+                  TextFormField(
+                    controller: tache_nom_controller,
+                    keyboardType: TextInputType.name,
+                    maxLength: 16,
                     decoration: const InputDecoration(
-                        hintText: 'Year',
+                        hintText: 'Task name',
                         hintStyle: TextStyle(color: Colors.black38)
                     ),
+                    validator: (value) {
+                      if (errornom) {
+                        return 'champs vide';
+                      }
+                      return null;
+                    },
+                ),
+                SizedBox(height: 16),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: annee_controller,
+                      keyboardType: TextInputType.number,
+                      maxLength: 4,
+                      textAlign: TextAlign.center,
+                      decoration: const InputDecoration(
+                          hintText: '0000',
+                          hintStyle: TextStyle(color: Colors.black38)
+                      ),
 
-                    validator: (value) {
-                      if (errorannee) {
-                        return 'Erreur';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                const Expanded(
-                  child: Text('-', textAlign: TextAlign.center,),
-                ),
-                Expanded(
-                  child: TextFormField(
-                    controller: mois_controller,
-                    keyboardType: TextInputType.number,
-                    maxLength: 2,
-                    textAlign: TextAlign.center,
-                    decoration: const InputDecoration(
-                        hintText: 'Month',
-                        hintStyle: TextStyle(color: Colors.black38)
+                      validator: (value) {
+                        if (errorannee) {
+                          return 'Erreur';
+                        }
+                        return null;
+                      },
                     ),
-                    validator: (value) {
-                      if (errormois) {
-                        return 'Erreur';
-                      }
-                      return null;
-                    },
                   ),
-                ),
                   const Expanded(
                     child: Text('-', textAlign: TextAlign.center,),
                   ),
-                Expanded(
-                  child: TextFormField(
-                    controller: jour_controller,
-                    keyboardType: TextInputType.number,
-                    maxLength: 2,
-                    textAlign: TextAlign.center,
-                    decoration: const InputDecoration(
-                        hintText: 'Day',
-                        hintStyle: TextStyle(color: Colors.black38)
+                  Expanded(
+                    child: TextFormField(
+                      controller: mois_controller,
+                      keyboardType: TextInputType.number,
+                      maxLength: 2,
+                      textAlign: TextAlign.center,
+                      decoration: const InputDecoration(
+                          hintText: '00',
+                          hintStyle: TextStyle(color: Colors.black38)
+                      ),
+                      validator: (value) {
+                        if (errormois) {
+                          return 'Erreur';
+                        }
+                        return null;
+                      },
                     ),
-                    validator: (value) {
-                      if (errorjour) {
-                        return 'Erreur';
-                      }
-                      return null;
-                    },
                   ),
-                )
+                    const Expanded(
+                      child: Text('-', textAlign: TextAlign.center,),
+                    ),
+                  Expanded(
+                    child: TextFormField(
+                      controller: jour_controller,
+                      keyboardType: TextInputType.number,
+                      maxLength: 2,
+                      textAlign: TextAlign.center,
+                      decoration: const InputDecoration(
+                          hintText: '00',
+                          hintStyle: TextStyle(color: Colors.black38)
+                      ),
+                      validator: (value) {
+                        if (errorjour) {
+                          return 'Erreur';
+                        }
+                        return null;
+                      },
+                    ),
+                  )
+                ],
+                              ),
+                SizedBox(height: 16),
+                ElevatedButton(onPressed: (){
+                  CreerTache(tache_nom_controller.text, annee_controller.text, mois_controller.text, jour_controller.text, username);
+                }, child: const Text('Create Task'))
+
+
               ],
-                            ),
-              SizedBox(height: 16),
-              ElevatedButton(onPressed: (){
-                CreerTache(tache_nom_controller.text, annee_controller.text, mois_controller.text, jour_controller.text, username);
-              }, child: const Text('Create Task'))
+              )
+            ),
 
-
-            ],
-            )
           ),
-
         ),
       ),
       drawer: LeTiroir(username: username,),

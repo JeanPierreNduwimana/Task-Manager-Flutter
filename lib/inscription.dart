@@ -21,6 +21,14 @@ class _InscriptionPageState extends State<InscriptionPage> {
   bool is_loading = false;
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    is_Enabled = true;
+    is_loading = false;
+  }
+
+  @override
   Widget build(BuildContext context) {
 
     return Scaffold(
@@ -82,9 +90,9 @@ class _InscriptionPageState extends State<InscriptionPage> {
                       Expanded(
                         flex: 1,
                         child: ElevatedButton(
-                          child: const Text('Inscription'),
+                          child: const Text('Connexion'),
                           onPressed: () async {
-                            Navigator.pushNamed(context, '/inscription');                  },
+                            Navigator.pushNamed(context, '/connexion');                  },
                         ),
                       ),
                       const SizedBox(width: 40,),
@@ -93,6 +101,7 @@ class _InscriptionPageState extends State<InscriptionPage> {
                         child: ElevatedButton(
                           onPressed: () async {
                             if(is_Enabled){
+                              FocusScope.of(context).unfocus();
                               inscription(username_controller.text, password_controller.text, confirm_password_controller.text, context); //HTTP REQUEST
                             }
                           },
@@ -106,7 +115,7 @@ class _InscriptionPageState extends State<InscriptionPage> {
                               color: Colors.white,
                             ),
                           )
-                              : const Text('Connexion'),
+                              : const Text('Inscription'),
                         ),
                       )
                     ],
@@ -136,10 +145,8 @@ class _InscriptionPageState extends State<InscriptionPage> {
         if(e is DioException){
           if(e.response?.data != null){
             erreurServeur(e.response!.data.toString(), context);
-            Future.delayed(const Duration(seconds: 5), (){
-              setState(() {
-                is_Enabled = true;  // Re-enable the button after 2 seconds
-              });});
+            Future.delayed(const Duration(seconds: 3), (){
+              setState_button(true,false);});
           }
           if(e.type == DioExceptionType.connectionError){
             erreurServeur("connectionError", context);
@@ -151,7 +158,7 @@ class _InscriptionPageState extends State<InscriptionPage> {
         }
       }finally{
         Navigator.pushNamed(context, '/accueil', arguments: response.username);
-        afficherMessage('Bienvenue ${response.username} 🎉', context, 8);
+        afficherMessage('Bienvenue ${response.username} 🎉', context, 3);
       }
     }else{
       Future.delayed(const Duration(seconds: 2), (){
@@ -165,7 +172,7 @@ class _InscriptionPageState extends State<InscriptionPage> {
     setState(() {});
 
     if(username == "" || password == "" || confirmpassword == ""){
-      afficherMessage("Aucun champ ne peut être vide", context, 2);
+      afficherMessage("Aucun champ ne peut être vide", context, 3);
       return true;
     }
 
@@ -173,7 +180,7 @@ class _InscriptionPageState extends State<InscriptionPage> {
       passwordError = true;
       _formKey.currentState!.validate();
       setState(() {});
-      afficherMessage("Mot de passe non-identiques", context, 2);
+      afficherMessage("Mot de passe non-identiques", context, 3);
       return true;
     }
     return false;

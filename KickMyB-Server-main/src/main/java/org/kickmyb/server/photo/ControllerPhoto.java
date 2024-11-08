@@ -53,6 +53,8 @@ public class ControllerPhoto {
     public ResponseEntity<byte[]> taskPhoto(@PathVariable Long id, @RequestParam(required = false, name = "width") Integer maxWidth) throws IOException {
         System.out.println("PHOTO : download request " + id + " width " + maxWidth);
         ConfigHTTP.attenteArticifielle();
+        ConfigHTTP.attenteArticifielle();
+        ConfigHTTP.attenteArticifielle();
         MPhoto pic = servicePhoto.getFile(id);
         if (maxWidth == null) { // no resizing
             return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(pic.blob);

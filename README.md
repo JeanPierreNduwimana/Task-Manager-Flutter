@@ -9,3 +9,5 @@ https://www.macincloud.com/
 https://www.macincloud.com/
 
 Pour deployement: https://www.youtube.com/watch?v=jm_cKADnNqc
+
+Pour les traductions: https://plugins.jetbrains.com/plugin/13666-flutter-intl

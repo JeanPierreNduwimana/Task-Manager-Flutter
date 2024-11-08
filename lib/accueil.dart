@@ -117,11 +117,36 @@ class AccueilState extends State<Accueil> {
                           ],
                         ),
                       ),
-                      (tache.photoId != 0)
+                      /*(tache.photoId != 0)
                           ? Container(
                             margin: const EdgeInsets.only(right: 12),
                             child: downloadImage(tache.photoId))
-                          : const SizedBox(),
+                          : const SizedBox(), */
+
+                      (tache.photoId != 0)
+                      ? Container(
+                        decoration: const BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage('assets/images/tenor.gif',)
+                          )
+                        ),
+                        child: Image.network(
+                          ImageUrl(tache.photoId),
+                          height: 80, width: 80, fit: BoxFit.cover,
+                          loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress){
+                            if(loadingProgress == null){
+                              return child;
+                            }
+                            return Center(
+                                child: CircularProgressIndicator(
+                                value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                (loadingProgress.expectedTotalBytes ?? 1)
+                                : null,
+                            ));
+                          }
+                        ),
+                      ) : const SizedBox()
                     ],
                   ), ),
                   onTap: (){

@@ -43,3 +43,4 @@ flutter:
   assets:
     - assets/images/background_image.jpg
     - assets/images/add_photo.png
+    - assets/images/tenor.gif

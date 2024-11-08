@@ -17,6 +17,15 @@ class Connexion extends StatefulWidget {
   State<Connexion> createState() => _ConnexionState();
 }
 class _ConnexionState extends State<Connexion> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    is_Enabled = true;
+    is_loading = false;
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -69,12 +78,14 @@ class _ConnexionState extends State<Connexion> {
                       child: ElevatedButton(
                         onPressed: () async {
                           if(is_Enabled){
+                            FocusScope.of(context).unfocus();
                             connexion(username_controller.text, password_controller.text, context); //HTTP REQUEST
                           }
                         },
                         style: ElevatedButton.styleFrom(
                           elevation: is_Enabled? 2 : 0,
                         ),
+
                         child: is_loading
                             ? const SizedBox(
                           height: 20, width: 20,
@@ -103,7 +114,7 @@ class _ConnexionState extends State<Connexion> {
     req.password = password;
 
     if(username == "" || password == ""){
-      afficherMessage("Aucun des champs ne peut être vide ☹", context, 2);
+      afficherMessage("Aucun des champs ne peut être vide ☹", context, 3);
       Future.delayed(const Duration(seconds: 2), (){
         setState(() {
           setState_button(true, false);  // Re-enable the button after 2 seconds
@@ -137,7 +148,7 @@ class _ConnexionState extends State<Connexion> {
       }finally{
         String name = response.username;
         Navigator.pushReplacementNamed(context, '/accueil', arguments: name);
-        afficherMessage('Bienvenue ${response.username} 🎉', context, 8);
+        afficherMessage('Bienvenue ${response.username} 🎉', context, 3);
       }
     }
   }
