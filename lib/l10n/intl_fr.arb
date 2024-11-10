@@ -16,5 +16,15 @@
   "create" : "Créer",
   "vipredirect" : "Patientez, vous allez être rediriger...",
   "emptyfields" : "Aucun des champs ne peut être vide ☹",
-  "welcome" : "Bienvenue"
+  "welcome" : "Bienvenue",
+  "InternalAuthenticationServiceException" : "Utilisateur inexistant veuillez vous inscrire",
+  "BadCredentialsException" : "Mot de passe invalide. Essayer de nouveau",
+  "UsernameAlreadyTaken" : "Utilisateur existe deja",
+  "UsernameTooShort" : "Le nom choisi est trop court",
+  "PasswordTooShort" : "Votre mot de passe est trop court",
+  "Empty" : "Nom de la tâche est vide",
+  "Existing" : "Nom de la tâche  existe déjà️",
+  "TooShort" : "Nom de la tâche  est trop court️",
+  "UnkownError" : "Erreur inconnu",
+  "connectionError" : "Désolé il n\'y a pas de connection 😣 \n Veuillez vérifiez votre réseau"
 }
