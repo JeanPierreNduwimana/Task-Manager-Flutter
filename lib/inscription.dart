@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'accueil.dart';
 import 'connexion.dart';
 import 'transfer.dart';
 
@@ -184,7 +185,7 @@ class _InscriptionPageState extends State<InscriptionPage> {
           erreurServeur("UnkownError", context);
         }
       }finally{
-        Navigator.pushNamed(context, '/accueil', arguments: response.username);
+        Navigator.push(context,MaterialPageRoute(builder: (context) => AccueilPage(username: response.username)));
         afficherMessage('${S.of(context).welcome} ${response.username} 🎉', context, 3);
       }
     }else{
