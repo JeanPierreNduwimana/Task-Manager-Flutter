@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:tp1_flutter/transfer.dart';
+import 'transfer.dart';
 
 import 'app_service.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'generated/l10n.dart';
 import 'lib_http.dart';
 
 class InscriptionPage extends StatefulWidget {
@@ -32,100 +34,112 @@ class _InscriptionPageState extends State<InscriptionPage> {
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
+    return MaterialApp(
 
-      appBar: AppBar(
-        title: const Text('Inscription'),
-        backgroundColor: Colors.deepPurple,
-      ),
+      localizationsDelegates: const [
+        S.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en', ''), // English, no country code
+        Locale('fr', ''), // Spanish, no country code
+      ],
 
-      body: Center(
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text(S.of(context).inscription),
+          backgroundColor: Colors.deepPurple,
+        ),
+        body: Center(
 
-          child: Form(
-            key: _formKey,
-            child: Padding(
-              padding: const EdgeInsets.all(48.0),
-              child: Column(
-                children: [
-                  const Text('inscription'),
-                  TextField(
-                    controller: username_controller,
-                    keyboardType: TextInputType.name,
-                    maxLength: 16,
-                    decoration: const InputDecoration(
-                        hintText: 'username',
-                        hintStyle: TextStyle(color: Colors.black38)
-                    ),
-                  ),
-                  TextFormField(
-                    controller: password_controller,
-                    obscureText: true,
-                    keyboardType: TextInputType.visiblePassword,
-                    decoration: const InputDecoration(
-                        hintText: 'password',
-                        hintStyle: TextStyle(color: Colors.black38)
-                    ),
-                    validator: (value) {
-                      if (passwordError) {return 'Mot de passe non-identiques';}
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  TextFormField(
-                    controller: confirm_password_controller,
-                    obscureText: true,
-                    keyboardType: TextInputType.visiblePassword,
-                    decoration: const InputDecoration(
-                        hintText: 'confirm your password',
-                        hintStyle: TextStyle(color: Colors.black38)
-                    ),
-                    validator: (value) {
-                      if (passwordError) {return 'Mot de passe non-identiques';}
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: ElevatedButton(
-                          child: const Text('Connexion'),
-                          onPressed: () async {
-                            Navigator.pushNamed(context, '/connexion');                  },
-                        ),
+            child: Form(
+              key: _formKey,
+              child: Padding(
+                padding: const EdgeInsets.all(48.0),
+                child: Column(
+                  children: [
+                    Text(S.of(context).inscription),
+                    TextField(
+                      controller: username_controller,
+                      keyboardType: TextInputType.name,
+                      maxLength: 16,
+                      decoration: InputDecoration(
+                          hintText: S.of(context).username,
+                          hintStyle: TextStyle(color: Colors.black38)
                       ),
-                      const SizedBox(width: 40,),
-                      Expanded(
-                        flex: 1,
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            if(is_Enabled){
-                              FocusScope.of(context).unfocus();
-                              inscription(username_controller.text, password_controller.text, confirm_password_controller.text, context); //HTTP REQUEST
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            elevation: is_Enabled? 2 : 0,
+                    ),
+                    TextFormField(
+                      controller: password_controller,
+                      obscureText: true,
+                      keyboardType: TextInputType.visiblePassword,
+                      decoration: InputDecoration(
+                          hintText: S.of(context).password,
+                          hintStyle: const TextStyle(color: Colors.black38)
+                      ),
+                      validator: (value) {
+                        if (passwordError) {return S.of(context).SamePassword;}
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: confirm_password_controller,
+                      obscureText: true,
+                      keyboardType: TextInputType.visiblePassword,
+                      decoration: InputDecoration(
+                          hintText: S.of(context).confirmpassword,
+                          hintStyle: const TextStyle(color: Colors.black38)
+                      ),
+                      validator: (value) {
+                        if (passwordError) {return 'Mot de passe non-identiques';}
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: ElevatedButton(
+                            child: Text(S.of(context).connection),
+                            onPressed: () async {
+                              Navigator.pushNamed(context, '/connexion');},
                           ),
-                          child: is_loading
-                              ? const SizedBox(
-                            height: 20, width: 20,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                            ),
-                          )
-                              : const Text('Inscription'),
                         ),
-                      )
-                    ],
-                  )
+                        const SizedBox(width: 40,),
+                        Expanded(
+                          flex: 1,
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              if(is_Enabled){
+                                FocusScope.of(context).unfocus();
+                                inscription(username_controller.text, password_controller.text, confirm_password_controller.text, context); //HTTP REQUEST
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              elevation: is_Enabled? 2 : 0,
+                            ),
+                            child: is_loading
+                                ? const SizedBox(
+                              height: 20, width: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
+                            )
+                                : Text(S.of(context).inscription),
+                          ),
+                        )
+                      ],
+                    )
 
-                ],
+                  ],
+                ),
               ),
-            ),
-          )
+            )
+        ),
       ),
     );
   }
@@ -159,7 +173,7 @@ class _InscriptionPageState extends State<InscriptionPage> {
         }
       }finally{
         Navigator.pushNamed(context, '/accueil', arguments: response.username);
-        afficherMessage('Bienvenue ${response.username} 🎉', context, 3);
+        afficherMessage('${S.of(context).welcome} ${response.username} 🎉', context, 3);
       }
     }else{
       Future.delayed(const Duration(seconds: 2), (){
@@ -173,7 +187,7 @@ class _InscriptionPageState extends State<InscriptionPage> {
     setState(() {});
 
     if(username == "" || password == "" || confirmpassword == ""){
-      afficherMessage("Aucun champ ne peut être vide", context, 3);
+      afficherMessage(S.of(context).emptyfields, context, 3);
       return true;
     }
 
@@ -181,7 +195,7 @@ class _InscriptionPageState extends State<InscriptionPage> {
       passwordError = true;
       _formKey.currentState!.validate();
       setState(() {});
-      afficherMessage("Mot de passe non-identiques", context, 3);
+      afficherMessage(S.of(context).SamePassword, context, 3);
       return true;
     }
     return false;

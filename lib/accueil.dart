@@ -1,10 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:tp1_flutter/consultation_tache.dart';
-import 'package:tp1_flutter/lib_http.dart';
-import 'package:tp1_flutter/app_service.dart';
-import 'package:tp1_flutter/tiroir_nav.dart';
-import 'package:tp1_flutter/transfer.dart';
+import 'tiroir_nav.dart';
+import 'transfer.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'app_service.dart';
+import 'consultation_tache.dart';
+import 'generated/l10n.dart';
+import 'lib_http.dart';
 
 
 
@@ -43,23 +45,38 @@ class AccueilState extends State<Accueil> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final String username = ModalRoute.of(context)!.settings.arguments as String;
-    return Scaffold(
+    return MaterialApp(
+      localizationsDelegates: const [
+        S.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en', ''), // English, no country code
+        Locale('fr', ''), // Spanish, no country code
+      ],
+      home: Scaffold(
         appBar: AppBar(
           title: const Text('Accueil'),
           backgroundColor: Colors.deepPurple,
         ),
         body: buildBody(username),
-      drawer: LeTiroir(username: username),
+        drawer: LeTiroir(username: username),
 
-      floatingActionButton: !is_LoadingList?  FloatingActionButton(
-        tooltip: 'Increment',
-        onPressed: (){
-          WidgetsBinding.instance.removeObserver(this); //On arreter l'observer
-          Navigator.pushNamed(context, '/creationtache', arguments: username);
-        },
-        child: const Icon(Icons.add, color: Colors.white, size: 28),
-      ) : const SizedBox(),
+        floatingActionButton: !is_LoadingList?  FloatingActionButton(
+          tooltip: 'Increment',
+          onPressed: (){
+            WidgetsBinding.instance.removeObserver(this); //On arreter l'observer
+            Navigator.pushNamed(context, '/creationtache', arguments: username);
+          },
+          child: const Icon(Icons.add, color: Colors.white, size: 28),
+        ) : const SizedBox(),
+      ),
     );
+
+
+
   }
 
   void setStateLoadingList(bool _isLoadingList){
@@ -74,7 +91,7 @@ class AccueilState extends State<Accueil> with WidgetsBindingObserver {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            connection_error? const Text('Erreur de connection') : is_LoadingList? const Text('Chargement de la liste des taches') : const Text('Aucune tâche disponible'),
+            connection_error? const Text('Erreur de connection') : is_LoadingList? Text(S.of(context).loadindTaskList) : Text(S.of(context).noTask),
             ElevatedButton(onPressed: (){
               if(connection_error){
                 connection_error = false;
@@ -84,13 +101,13 @@ class AccueilState extends State<Accueil> with WidgetsBindingObserver {
                 Navigator.pushNamed(context, '/creationtache', arguments: username);
               }
             },
-                child: connection_error? const Text('Recharger')
+                child: connection_error? Text(S.of(context).reload)
                     : (is_LoadingList)? const SizedBox(
                   height: 20, width: 20,
                   child: CircularProgressIndicator(
                     color: Colors.white,
                   ),
-                ) : const Text('Ajouter une tâche'))
+                ) : Text(S.of(context).addTask))
           ],
         ),
       );

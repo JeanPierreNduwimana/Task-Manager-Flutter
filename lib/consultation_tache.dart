@@ -1,13 +1,15 @@
 import 'dart:io';
+import 'dart:js_interop_unsafe';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:tp1_flutter/tiroir_nav.dart';
-import 'package:tp1_flutter/transfer.dart';
-
+import 'tiroir_nav.dart';
+import 'transfer.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'app_service.dart';
+import 'generated/l10n.dart';
 import 'lib_http.dart';
 
 
@@ -38,41 +40,52 @@ class _ConsultationState extends State<ConsultationTache>  with WidgetsBindingOb
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this); //Ajout d'un oberver
-    print('Ajout d\'un oberver');
     DetailsTache(widget.id);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Consultation Tache'),
-        backgroundColor: Colors.deepPurple,
+    return MaterialApp(
+      localizationsDelegates: const [
+        S.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en', ''), // English, no country code
+        Locale('fr', ''), // Spanish, no country code
+      ],
+      home:  Scaffold(
+        appBar: AppBar(
+          title: Text(S.of(context).addTask),
+          backgroundColor: Colors.deepPurple,
+        ),
+        body: buildBody(),
+        drawer: LeTiroir(username: widget.username),
+        floatingActionButton: !isLoading
+            ? FloatingActionButton(
+          tooltip: 'Increment',
+          onPressed: (){
+            WidgetsBinding.instance.removeObserver(this); //On arreter l'observer
+            Navigator.pushNamed(context, '/accueil', arguments: widget.username);
+          },
+          child: const Icon(Icons.home, color: Colors.white, size: 28),
+        ) : const SizedBox(),
       ),
-      body: buildBody(),
-      drawer: LeTiroir(username: widget.username),
-      floatingActionButton: !isLoading
-      ? FloatingActionButton(
-        tooltip: 'Increment',
-        onPressed: (){
-          WidgetsBinding.instance.removeObserver(this); //On arreter l'observer
-          Navigator.pushNamed(context, '/accueil', arguments: widget.username);
-        },
-        child: const Icon(Icons.home, color: Colors.white, size: 28),
-      ) : const SizedBox(),
     );
+
+
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if(state == AppLifecycleState.resumed){
-      print('resumed');
       if(!isuploading){
         DetailsTache(widget.id);
       }
     }
     if(state == AppLifecycleState.paused){
-      print('paused');
       tache = TaskDetailPhotoResponse();
     }
   }
@@ -129,7 +142,7 @@ class _ConsultationState extends State<ConsultationTache>  with WidgetsBindingOb
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset('assets/images/tenor.gif', height: 80, width: 80,),
-            const Text('Chargement...'),
+            Text(S.of(context).loading),
           ],
         ),
       )
@@ -172,7 +185,7 @@ class _ConsultationState extends State<ConsultationTache>  with WidgetsBindingOb
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),),
-                        Text('Temps utilisé'),
+                        Text(S.of(context).timeUsed),
                       ],
                     ),
                   ),
@@ -196,7 +209,7 @@ class _ConsultationState extends State<ConsultationTache>  with WidgetsBindingOb
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),),
-                        const Text('Progression'),
+                        Text(S.of(context).progression),
                       ],
                     ),
                   ),
@@ -254,8 +267,8 @@ class _ConsultationState extends State<ConsultationTache>  with WidgetsBindingOb
 
                 }),
             const SizedBox(height: 40,),
-            ElevatedButton(onPressed:() async {btnMiseAJour();}, child: const Text('Mettre à jour ma progression')),
-            ElevatedButton( onPressed:() async{btnSupprimer();}, child: const Text('Supprimer')),
+            ElevatedButton(onPressed:() async {btnMiseAJour();}, child: Text(S.of(context).updateProgression)),
+            ElevatedButton( onPressed:() async{btnSupprimer();}, child: Text(S.of(context).delete)),
           ],
         ),
             ),
@@ -267,14 +280,14 @@ class _ConsultationState extends State<ConsultationTache>  with WidgetsBindingOb
       if(imagePath != ""){
         try{
           await sendImage(imagePath, tache.id);} catch(e){
-          afficherMessage("Le serveur n'a pas aimé cette image, essayer avec une autre et ca marchera, promis 😉", context,10);
+          afficherMessage(S.of(context).errorUploadImage, context,10);
         }
         await MiseAJourProgression(tache.id.toString(), _sliderValue.round().toString());
       }else{
         MiseAJourProgression(tache.id.toString(), _sliderValue.round().toString());
       }
     }finally{
-      afficherMessage("La tache est mise à jour 👌", context,3);
+      afficherMessage(S.of(context).taskUpdatedMessage, context,3);
     }
   }
 
@@ -284,7 +297,7 @@ class _ConsultationState extends State<ConsultationTache>  with WidgetsBindingOb
     }finally {
       WidgetsBinding.instance.removeObserver(this); //On arreter l'observer
       Navigator.pushNamed(context, '/accueil', arguments: this.widget.username);
-      afficherMessage("La tache ${tache.name} est supprimé 🔪", context,3);
+      afficherMessage(S.of(context).deletedTaskMessage(tache.name), context,3);
     }
   }
 }

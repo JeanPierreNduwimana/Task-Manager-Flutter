@@ -23,8 +23,17 @@
   "UsernameTooShort" : "Le nom choisi est trop court",
   "PasswordTooShort" : "Votre mot de passe est trop court",
   "Empty" : "Nom de la tâche est vide",
+  "SamePassword" : "Mot de passes ne corresponds pas",
   "Existing" : "Nom de la tâche  existe déjà️",
   "TooShort" : "Nom de la tâche  est trop court️",
   "UnkownError" : "Erreur inconnu",
-  "connectionError" : "Désolé il n\'y a pas de connection 😣 \n Veuillez vérifiez votre réseau"
+  "connectionError" : "Désolé il n'y a pas de connection 😣 \n Veuillez vérifiez votre réseau",
+  "noTask" : "Aucune tache disponible",
+  "reload" : "Recharger",
+  "addTask" : "Ajout une tache",
+  "loading" : "Chargement...",
+  "errorUploadImage" : "Le serveur n'a pas aimé cette image, essayer avec une autre et ca marchera, promis 😉",
+  "taskUpdatedMessage" : "La tache est mise à jour 👌",
+  "deletedTaskMessage" : "La tache {taskName} est supprimé 🔪",
+  "taskName" : "Nom de la tache"
 }

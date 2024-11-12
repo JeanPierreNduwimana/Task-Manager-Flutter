@@ -3,11 +3,11 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tp1_flutter/lib_http.dart';
-import 'package:tp1_flutter/transfer.dart';
+import 'transfer.dart';
 import 'app_service.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'generated/l10n.dart';
+import 'lib_http.dart';
 
 
 final TextEditingController username_controller = TextEditingController();
@@ -29,7 +29,6 @@ class _ConnexionState extends State<Connexion> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    S.load(const Locale('en'));
     fastConnexion();
     is_Enabled = true;
     is_loading = false;
@@ -71,13 +70,13 @@ class _ConnexionState extends State<Connexion> {
             padding: const EdgeInsets.all(48.0),
             child: Column(
               children: [
-                Text(S.of(context)!.connection),
+                Text(S.of(context).connection),
                 TextField(
                   controller: username_controller,
                   keyboardType: TextInputType.name,
                   maxLength: 16,
                   decoration:  InputDecoration(
-                      hintText: S.of(context)!.username,
+                      hintText: S.of(context).username,
                       hintStyle: TextStyle(color: Colors.black38)
                   ),
                 ),
