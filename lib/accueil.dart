@@ -1,15 +1,39 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:tp1_flutter/consultation_tache.dart';
-import 'package:tp1_flutter/lib_http.dart';
-import 'package:tp1_flutter/app_service.dart';
-import 'package:tp1_flutter/tiroir_nav.dart';
-import 'package:tp1_flutter/transfer.dart';
+import 'package:tp1_flutter/creation_tache.dart';
+import 'tiroir_nav.dart';
+import 'transfer.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'app_service.dart';
+import 'consultation_tache.dart';
+import 'generated/l10n.dart';
+import 'lib_http.dart';
 
-
+class AccueilPage extends StatelessWidget{
+  final String username;
+  const AccueilPage({super.key, required this.username});
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return MaterialApp(
+      localizationsDelegates: const [
+        S.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en', ''), // English, no country code
+        Locale('fr', ''), // Spanish, no country code
+      ],
+      home: Accueil(username: username,),
+    );
+  }
+}
 
 class Accueil extends StatefulWidget {
-  const Accueil({super.key});
+  final String username;
+  const Accueil({super.key,required this.username});
 
   @override
   State<Accueil> createState() => AccueilState();
@@ -26,7 +50,7 @@ class AccueilState extends State<Accueil> with WidgetsBindingObserver {
   void initState() {
     // TODO: implement initState
     super.initState();
-    WidgetsBinding.instance.addObserver(this); //A
+    WidgetsBinding.instance.addObserver(this);
     getListTaches();
   }
   @override
@@ -42,24 +66,40 @@ class AccueilState extends State<Accueil> with WidgetsBindingObserver {
   }
   @override
   Widget build(BuildContext context) {
-    final String username = ModalRoute.of(context)!.settings.arguments as String;
-    return Scaffold(
+    //final String username = ModalRoute.of(context)!.settings.arguments as String;
+    return MaterialApp(
+      localizationsDelegates: const [
+        S.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en', ''), // English, no country code
+        Locale('fr', ''), // Spanish, no country code
+      ],
+      home: Scaffold(
         appBar: AppBar(
           title: const Text('Accueil'),
           backgroundColor: Colors.deepPurple,
         ),
-        body: buildBody(username),
-      drawer: LeTiroir(username: username),
+        body: buildBody(widget.username),
+        drawer: LeTiroir(username: widget.username),
 
-      floatingActionButton: !is_LoadingList?  FloatingActionButton(
-        tooltip: 'Increment',
-        onPressed: (){
-          WidgetsBinding.instance.removeObserver(this); //On arreter l'observer
-          Navigator.pushNamed(context, '/creationtache', arguments: username);
-        },
-        child: const Icon(Icons.add, color: Colors.white, size: 28),
-      ) : const SizedBox(),
+        floatingActionButton: !is_LoadingList?  FloatingActionButton(
+          tooltip: 'Increment',
+          onPressed: (){
+            WidgetsBinding.instance.removeObserver(this); //On arreter l'observer
+            //Navigator.pushNamed(context, '/creationtache', arguments: widget.username);
+            Navigator.push(context,MaterialPageRoute(builder: (context) => CreationTachePage( username: widget.username)));
+          },
+          child: const Icon(Icons.add, color: Colors.white, size: 28),
+        ) : const SizedBox(),
+      ),
     );
+
+
+
   }
 
   void setStateLoadingList(bool _isLoadingList){
@@ -74,23 +114,24 @@ class AccueilState extends State<Accueil> with WidgetsBindingObserver {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            connection_error? const Text('Erreur de connection') : is_LoadingList? const Text('Chargement de la liste des taches') : const Text('Aucune tâche disponible'),
+            connection_error? const Text('Erreur de connection') : is_LoadingList? Text(S.of(context).loadindTaskList) : Text(S.of(context).noTask),
             ElevatedButton(onPressed: (){
               if(connection_error){
                 connection_error = false;
                 getListTaches();
               }else{
                 WidgetsBinding.instance.removeObserver(this); //On arreter l'observer
-                Navigator.pushNamed(context, '/creationtache', arguments: username);
+                //Navigator.pushNamed(context, '/creationtache', arguments: this.widget.username);
+                Navigator.push(context,MaterialPageRoute(builder: (context) => CreationTachePage( username: widget.username)));
               }
             },
-                child: connection_error? const Text('Recharger')
+                child: connection_error? Text(S.of(context).reload)
                     : (is_LoadingList)? const SizedBox(
                   height: 20, width: 20,
                   child: CircularProgressIndicator(
                     color: Colors.white,
                   ),
-                ) : const Text('Ajouter une tâche'))
+                ) : Text(S.of(context).addTask))
           ],
         ),
       );
@@ -145,22 +186,22 @@ class AccueilState extends State<Accueil> with WidgetsBindingObserver {
                               image: AssetImage('assets/images/tenor.gif',)
                           )
                       ),
-                      child: Image.network(
-                          ImageUrl(tache.photoId),
-                          height: 80, width: 80, fit: BoxFit.cover,
-                          loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress){
-                            if(loadingProgress == null){
-                              return child;
-                            }
-                            return Center(
-                                child: CircularProgressIndicator(
-                                  value: loadingProgress.expectedTotalBytes != null
-                                      ? loadingProgress.cumulativeBytesLoaded /
-                                      (loadingProgress.expectedTotalBytes ?? 1)
-                                      : null,
-                                ));
-                          }
-                      ),
+                          child: Image.network(
+                              ImageUrl(tache.photoId),
+                              height: 80, width: 80, fit: BoxFit.cover,
+                              loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress){
+                                if(loadingProgress == null){
+                                  return child;
+                                }
+                                return Center(
+                                    child: CircularProgressIndicator(
+                                      value: loadingProgress.expectedTotalBytes != null
+                                          ? loadingProgress.cumulativeBytesLoaded /
+                                          (loadingProgress.expectedTotalBytes ?? 1)
+                                          : null,
+                                    ));
+                              }
+                          ),
                     ) : const SizedBox()
                   ],
                 ), ),

@@ -11,3 +11,12 @@ https://www.macincloud.com/
 Pour deployement: https://www.youtube.com/watch?v=jm_cKADnNqc
 
 Pour les traductions: https://plugins.jetbrains.com/plugin/13666-flutter-intl
+
+
+Ajouter shared_preferences à pubspec.yaml
+
+dependencies:
+flutter:
+sdk: flutter
+dio: ^5.6.0
+shared_preferences: ^2.0.15

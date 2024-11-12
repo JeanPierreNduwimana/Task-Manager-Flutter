@@ -1,6 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'generated/l10n.dart';
 import 'lib_http.dart';
+
+
+
 
 
   String ImageUrl(int id) {
@@ -14,6 +18,7 @@ import 'lib_http.dart';
     );
   }
 
+
   void erreurServeur(String typeDerreur, BuildContext context){
 
     int delaiDaffichage = 3;
@@ -21,37 +26,37 @@ import 'lib_http.dart';
     switch(typeDerreur)
     {
       case "InternalAuthenticationServiceException":
-        afficherMessage('Utilisateur inexistant veuillez vous inscrire 🙅‍♀️ \nErreur: $typeDerreur', context, delaiDaffichage);
+        afficherMessage('${S.of(context).InternalAuthenticationServiceException} 🙅‍♀️ \nErreur: $typeDerreur', context, delaiDaffichage);
         break;
       case "BadCredentialsException":
-        afficherMessage('Mot de passe invalide. Essayer de nouveau 🍀 \nErreur: $typeDerreur', context, delaiDaffichage);
+        afficherMessage('${S.of(context).BadCredentialsException} 🍀 \nErreur: $typeDerreur', context, delaiDaffichage);
         break;
       case "UsernameAlreadyTaken":
-        afficherMessage('Utilisateur existe deja 🙅‍ \nErreur: $typeDerreur', context, delaiDaffichage);
+        afficherMessage('${S.of(context).UsernameAlreadyTaken} 🙅‍ \nErreur: $typeDerreur', context, delaiDaffichage);
         break;
       case "UsernameTooShort":
-        afficherMessage('Le nom choisi est trop court 🤏 \nErreur: $typeDerreur', context, delaiDaffichage);
+        afficherMessage('${S.of(context).UsernameTooShort} 🤏 \nErreur: $typeDerreur', context, delaiDaffichage);
         break;
       case "PasswordTooShort":
-        afficherMessage('Votre mot de passe est trop court 🤏 \nErreur: $typeDerreur', context, delaiDaffichage);
+        afficherMessage('${S.of(context).PasswordTooShort} 🤏 \nErreur: $typeDerreur', context, delaiDaffichage);
         break;
       case "Empty":
-        afficherMessage('Nom de la tâche est vide 🤷‍♂️ \nErreur: $typeDerreur', context, delaiDaffichage);
+        afficherMessage('${S.of(context).Empty} 🤷‍♂️ \nErreur: $typeDerreur', context, delaiDaffichage);
         break;
       case "Existing":
-        afficherMessage('Nom de la tâche  existe déjà️ 🙅‍ \nErreur: $typeDerreur', context, delaiDaffichage);
+        afficherMessage('${S.of(context).Existing} 🙅‍ \nErreur: $typeDerreur', context, delaiDaffichage);
         break;
       case "TooShort":
-        afficherMessage('Nom de la tâche  est trop court️ 🙅‍ \nErreur: $typeDerreur', context, delaiDaffichage);
+        afficherMessage('${S.of(context).TooShort} 🙅‍ \nErreur: $typeDerreur', context, delaiDaffichage);
         break;
       case "NoSuchElementException":
       //Aucune idéé ce que ca fait
         break;
       case "UnkownError":
-        afficherMessage('Erreur inconnu 🤔', context, delaiDaffichage);
+        afficherMessage('${S.of(context).UnkownError} 🤔', context, delaiDaffichage);
         break;
       case "connectionError":
-        afficherMessage('Désolé il n\'y a pas de connection 😣 \n Veuillez vérifiez votre réseau', context, delaiDaffichage);
+        afficherMessage(S.of(context).connectionError, context, delaiDaffichage);
       default:
         break;
     }
