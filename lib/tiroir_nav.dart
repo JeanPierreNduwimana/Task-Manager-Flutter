@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tp1_flutter/connexion.dart';
 import 'package:tp1_flutter/creation_tache.dart';
 
 import 'accueil.dart';
@@ -50,9 +51,8 @@ class LeTiroirState extends State<LeTiroir> {
           title: const Text("Accueil"),
           onTap: () {
             if(!isDisconnecting){
-              Navigator.pushNamed(
-                  context, '/accueil', arguments: this.widget.username
-              );
+              //Navigator.pushNamed(   context, '/accueil', arguments: this.widget.username);
+              Navigator.push(context,MaterialPageRoute(builder: (context) => AccueilPage(username: this.widget.username)));
             }
 
             // Then close the drawer
@@ -65,7 +65,10 @@ class LeTiroirState extends State<LeTiroir> {
           title: const Text("CreationTache"),
           onTap: () {
             if(!isDisconnecting){
-              Navigator.pushNamed(context, '/creationtache', arguments: this.widget.username);
+              Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => CreationTachePage(username: this.widget.username),)
+              );
+             // Navigator.pushNamed(context, '/creationtache', arguments: this.widget.username);
             }
             // Then close the drawer
           },
@@ -113,7 +116,11 @@ class LeTiroirState extends State<LeTiroir> {
       final prefs = await SharedPreferences.getInstance();
       prefs.remove('username');
       prefs.remove('password');
-      Navigator.pushReplacementNamed(context, '/connexion');
+      //Navigator.pushReplacementNamed(context, '/connexion');
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const Connexion())
+      );
+     // Navigator.of(context).pushReplacement(newRoute)
     }
     
   }

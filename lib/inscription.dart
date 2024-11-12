@@ -1,11 +1,35 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'connexion.dart';
 import 'transfer.dart';
 
 import 'app_service.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'generated/l10n.dart';
 import 'lib_http.dart';
+
+class InscriptionPageLess extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return MaterialApp(
+      localizationsDelegates: const [
+        S.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en', ''), // English, no country code
+        Locale('fr', ''), // Spanish, no country code
+      ],
+
+      home: InscriptionPage(),
+    );
+  }
+
+}
 
 class InscriptionPage extends StatefulWidget {
   const InscriptionPage({super.key});
@@ -34,20 +58,7 @@ class _InscriptionPageState extends State<InscriptionPage> {
   @override
   Widget build(BuildContext context) {
 
-    return MaterialApp(
-
-      localizationsDelegates: const [
-        S.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('en', ''), // English, no country code
-        Locale('fr', ''), // Spanish, no country code
-      ],
-
-      home: Scaffold(
+    return Scaffold(
         appBar: AppBar(
           title: Text(S.of(context).inscription),
           backgroundColor: Colors.deepPurple,
@@ -106,7 +117,9 @@ class _InscriptionPageState extends State<InscriptionPage> {
                           child: ElevatedButton(
                             child: Text(S.of(context).connection),
                             onPressed: () async {
-                              Navigator.pushNamed(context, '/connexion');},
+                              Navigator.of(context).push(
+                                  MaterialPageRoute(builder: (context) => const Connexion())
+                              );},
                           ),
                         ),
                         const SizedBox(width: 40,),
@@ -140,8 +153,7 @@ class _InscriptionPageState extends State<InscriptionPage> {
               ),
             )
         ),
-      ),
-    );
+      );
   }
 
   bool passwordError = false;

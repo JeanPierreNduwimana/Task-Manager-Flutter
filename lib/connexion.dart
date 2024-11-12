@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tp1_flutter/accueil.dart';
+import 'package:tp1_flutter/inscription.dart';
 import 'transfer.dart';
 import 'app_service.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -14,6 +16,29 @@ final TextEditingController username_controller = TextEditingController();
 final TextEditingController password_controller = TextEditingController();
 bool is_Enabled = true;
 bool is_loading = false;
+
+class ConnexionPage extends StatelessWidget {
+  const ConnexionPage({super.key});
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return const MaterialApp(
+      localizationsDelegates: [
+        S.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [
+        Locale('en', ''), // English, no country code
+        Locale('fr', ''), // Spanish, no country code
+      ],
+      home: Connexion(),
+    );
+  }
+
+}
+
 
 class Connexion extends StatefulWidget {
   const Connexion({super.key});
@@ -37,19 +62,7 @@ class _ConnexionState extends State<Connexion> {
   @override
   Widget build(BuildContext context) {
 
-    return MaterialApp(
-        localizationsDelegates: const [
-          S.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: const [
-          Locale('en', ''), // English, no country code
-          Locale('fr', ''), // Spanish, no country code
-        ],
-
-      home: Scaffold(
+    return Scaffold(
         appBar: AppBar(
           title: Text(S.of(context)!.connection),
           backgroundColor: Colors.deepPurple,
@@ -96,9 +109,13 @@ class _ConnexionState extends State<Connexion> {
                     Expanded(
                       flex: 1,
                       child: ElevatedButton(
-                        child: Text(S.of(context)!.inscription),
+                        child: Text(S.of(context).inscription),
                         onPressed: () async {
-                          Navigator.pushNamed(context, '/inscription'); },
+                          Navigator.of(context).push(
+                              MaterialPageRoute(builder: (
+                                  context) => const InscriptionPage())
+                          );
+                        }
                       ),
                     ),
                     const SizedBox(width: 40,),
@@ -132,7 +149,6 @@ class _ConnexionState extends State<Connexion> {
             ),
           )
       ),
-    )
     );
   }
 
@@ -178,7 +194,8 @@ class _ConnexionState extends State<Connexion> {
         final prefs = await SharedPreferences.getInstance();
         prefs.setString('username', response.username);
         prefs.setString('password', password);
-        Navigator.pushReplacementNamed(context, '/accueil', arguments: name);
+       // Navigator.pushReplacementNamed(context, '/accueil', arguments: name);
+        Navigator.push(context,MaterialPageRoute(builder: (context) => AccueilPage(username: username)));
         afficherMessage('Bienvenue ${response.username} 🎉', context, 3);
       }
     }
@@ -204,8 +221,9 @@ class _ConnexionState extends State<Connexion> {
       String name = response.username;
       fastConnexionActive = false;
       Future.delayed(const Duration(seconds: 4), (){
-        Navigator.pushReplacementNamed(context, '/accueil', arguments: name);
-        afficherMessage('${S.of(context)!.welcome} ${response.username} 🎉', context, 3);
+       // Navigator.pushReplacementNamed(context, '/accueil', arguments: name);
+        Navigator.push(context,MaterialPageRoute(builder: (context) => AccueilPage(username: username)));
+        afficherMessage('${S.of(context).welcome} ${response.username} 🎉', context, 3);
         });
     }
   }

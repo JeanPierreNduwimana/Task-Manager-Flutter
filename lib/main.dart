@@ -39,9 +39,7 @@ class MyApp extends StatelessWidget {
       home: const Connexion(),
       routes: {
         '/inscription': (context) => const InscriptionPage(),
-        '/connexion': (context) => const Connexion(),
-        '/accueil': (context) => const Accueil(),
-        '/creationtache': (context) => const CreationTache(),
+        '/connexion': (context) => const ConnexionPage(),
       },
     );
   }

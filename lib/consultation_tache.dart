@@ -1,10 +1,9 @@
 import 'dart:io';
-import 'dart:js_interop_unsafe';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:tp1_flutter/accueil.dart';
 import 'tiroir_nav.dart';
 import 'transfer.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -12,6 +11,30 @@ import 'app_service.dart';
 import 'generated/l10n.dart';
 import 'lib_http.dart';
 
+class ConsultationTachePage extends StatelessWidget {
+
+  final String id;
+  final String username;
+  const ConsultationTachePage ({super.key, required this.id, required this.username});
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return MaterialApp(
+      localizationsDelegates: const [
+        S.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en', ''), // English, no country code
+        Locale('fr', ''), // Spanish, no country code
+      ],
+      home: ConsultationTache(id: id,username: username,),
+    );
+  }
+}
 
 class ConsultationTache extends StatefulWidget {
 
@@ -46,16 +69,7 @@ class _ConsultationState extends State<ConsultationTache>  with WidgetsBindingOb
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      localizationsDelegates: const [
-        S.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('en', ''), // English, no country code
-        Locale('fr', ''), // Spanish, no country code
-      ],
+
       home:  Scaffold(
         appBar: AppBar(
           title: Text(S.of(context).addTask),
@@ -65,13 +79,14 @@ class _ConsultationState extends State<ConsultationTache>  with WidgetsBindingOb
         drawer: LeTiroir(username: widget.username),
         floatingActionButton: !isLoading
             ? FloatingActionButton(
-          tooltip: 'Increment',
-          onPressed: (){
-            WidgetsBinding.instance.removeObserver(this); //On arreter l'observer
-            Navigator.pushNamed(context, '/accueil', arguments: widget.username);
-          },
-          child: const Icon(Icons.home, color: Colors.white, size: 28),
-        ) : const SizedBox(),
+              tooltip: 'Increment',
+              onPressed: (){
+                WidgetsBinding.instance.removeObserver(this); //On arreter l'observer
+                //Navigator.pushNamed(context, '/accueil', arguments: widget.username);
+               Navigator.of(context).push(MaterialPageRoute(builder: (context) => Accueil(username: widget.username,)));
+              },
+                child: const Icon(Icons.home, color: Colors.white, size: 28),
+              ) : const SizedBox(),
       ),
     );
 
@@ -281,6 +296,7 @@ class _ConsultationState extends State<ConsultationTache>  with WidgetsBindingOb
         try{
           await sendImage(imagePath, tache.id);} catch(e){
           afficherMessage(S.of(context).errorUploadImage, context,10);
+          return;
         }
         await MiseAJourProgression(tache.id.toString(), _sliderValue.round().toString());
       }else{
@@ -296,7 +312,8 @@ class _ConsultationState extends State<ConsultationTache>  with WidgetsBindingOb
       await removeTask(tache);
     }finally {
       WidgetsBinding.instance.removeObserver(this); //On arreter l'observer
-      Navigator.pushNamed(context, '/accueil', arguments: this.widget.username);
+      //Navigator.pushNamed(context, '/accueil', arguments: this.widget.username);
+      Navigator.of(context).push(MaterialPageRoute(builder: (context) => Accueil(username: widget.username,)));
       afficherMessage(S.of(context).deletedTaskMessage(tache.name), context,3);
     }
   }

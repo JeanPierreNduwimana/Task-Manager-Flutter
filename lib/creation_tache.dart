@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:tp1_flutter/app_service.dart';
+import 'accueil.dart';
 import 'tiroir_nav.dart';
 import 'transfer.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -6,33 +8,13 @@ import 'generated/l10n.dart';
 import 'lib_http.dart';
 
 
-class CreationTache extends StatefulWidget {
-  const CreationTache({super.key});
-
-
-  @override
-  State<CreationTache> createState() => _CreationTacheState();
-}
-
-
-
-bool errorannee = false;
-bool errormois = false;
-bool errorjour = false;
-bool errornom = false;
-
-class _CreationTacheState extends State<CreationTache> {
-
-
-  final _formKey = GlobalKey<FormState>();
-  final TextEditingController tache_nom_controller = TextEditingController();
-  final TextEditingController annee_controller = TextEditingController();
-  final TextEditingController mois_controller = TextEditingController();
-  final TextEditingController jour_controller = TextEditingController();
-
+class CreationTachePage extends StatelessWidget {
+  final String username;
+  const CreationTachePage({super.key, required this.username});
   @override
   Widget build(BuildContext context) {
-    final String username = ModalRoute.of(context)!.settings.arguments as String;
+    // TODO: implement build
+
     return MaterialApp(
       localizationsDelegates: const [
         S.delegate,
@@ -44,7 +26,33 @@ class _CreationTacheState extends State<CreationTache> {
         Locale('en', ''), // English, no country code
         Locale('fr', ''), // Spanish, no country code
       ],
-      home: Scaffold(
+      home: CreationTache(username: username),
+    );
+  }
+}
+
+class CreationTache extends StatefulWidget {
+  final String username;
+  const CreationTache({super.key, required this.username});
+  @override
+  State<CreationTache> createState() => _CreationTacheState();
+}
+bool errorannee = false;
+bool errormois = false;
+bool errorjour = false;
+bool errornom = false;
+
+class _CreationTacheState extends State<CreationTache> {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController tache_nom_controller = TextEditingController();
+  final TextEditingController annee_controller = TextEditingController();
+  final TextEditingController mois_controller = TextEditingController();
+  final TextEditingController jour_controller = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    //final String username = ModalRoute.of(context)!.settings.arguments as String;
+    return Scaffold(
         appBar: AppBar(
           title: Text(S.of(context).createTask),
           backgroundColor: Colors.deepPurple,
@@ -146,7 +154,7 @@ class _CreationTacheState extends State<CreationTache> {
                       ),
                       SizedBox(height: 16),
                       ElevatedButton(onPressed: (){
-                        CreerTache(tache_nom_controller.text, annee_controller.text, mois_controller.text, jour_controller.text, username);
+                        CreerTache(tache_nom_controller.text, annee_controller.text, mois_controller.text, jour_controller.text, this.widget.username);
                       }, child: Text(S.of(context).createTask))
 
 
@@ -157,24 +165,24 @@ class _CreationTacheState extends State<CreationTache> {
             ),
           ),
         ),
-        drawer: LeTiroir(username: username,),
+        drawer: LeTiroir(username: this.widget.username,),
         floatingActionButton: FloatingActionButton(
           //backgroundColor: const Color.fromRGBO(82, 170, 94, 1.0),
           tooltip: 'Increment',
           onPressed: (){
-            Navigator.pushNamed(context, '/accueil', arguments: username);
+           // Navigator.pushNamed(context, '/accueil', arguments: username);
+            Navigator.push(context,MaterialPageRoute(builder: (context) => AccueilPage( username: widget.username)));
           },
           child: const Icon(Icons.home, color: Colors.white, size: 28),
         ),
-      ),
-
-    );
+      );
 
   }
 
   void CreerTache(String name, String annee, String mois, String jour, String username) async{
 
       if(ErreurChamps(name, annee, mois, jour)){
+        afficherMessage(S.of(context).emptyfields, context, 3);
         _formKey.currentState!.validate();
       }else {
 
@@ -185,7 +193,8 @@ class _CreationTacheState extends State<CreationTache> {
         req.deadline = date;
 
         await AddTask(req);
-        Navigator.pushNamed(context, '/accueil', arguments: username);
+       // Navigator.pushNamed(context, '/accueil', arguments: username);
+        Navigator.push(context,MaterialPageRoute(builder: (context) => AccueilPage(username: username)));
       }
 
   }
