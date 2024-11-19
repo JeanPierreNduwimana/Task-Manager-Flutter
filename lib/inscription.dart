@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'accueil.dart';
@@ -131,7 +132,7 @@ class _InscriptionPageState extends State<InscriptionPage> {
                             onPressed: () async {
                               if(is_Enabled){
                                 FocusScope.of(context).unfocus();
-                                inscription(username_controller.text, password_controller.text, confirm_password_controller.text, context); //HTTP REQUEST
+                                inscription(username_controller.text, password_controller.text); //HTTP REQUEST
                               }
                             },
                             style: ElevatedButton.styleFrom(
@@ -159,7 +160,7 @@ class _InscriptionPageState extends State<InscriptionPage> {
   }
 
   bool passwordError = false;
-
+/*
   void inscription(String username, String password,String confirmpassword, BuildContext context) async {
     setState_button(false,true);
     SignUpRequest req = SignUpRequest();
@@ -192,6 +193,26 @@ class _InscriptionPageState extends State<InscriptionPage> {
     }else{
       Future.delayed(const Duration(seconds: 2), (){
       setState_button(true,false);});
+    }
+  }
+*/
+
+  Future<void> inscription(String username, String password) async {
+    String email = username + '@tp1flutter.com';
+
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      await FirebaseFirestore.instance.collection('users').doc(
+          userCredential.user!.uid).set({
+        'username': username,
+        'email': email,
+      });
+    } catch (e) {
+      print('Erreur d\'inscription: $e');
     }
   }
 

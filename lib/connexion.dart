@@ -1,7 +1,10 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tp1_flutter/accueil.dart';
 import 'package:tp1_flutter/inscription.dart';
@@ -16,6 +19,10 @@ final TextEditingController username_controller = TextEditingController();
 final TextEditingController password_controller = TextEditingController();
 bool is_Enabled = true;
 bool is_loading = false;
+
+FirebaseFirestore _db = FirebaseFirestore.instance;
+FirebaseAuth _auth = FirebaseAuth.instance;
+GoogleSignIn _googleSignIn = GoogleSignIn();
 
 class ConnexionPage extends StatelessWidget {
   const ConnexionPage({super.key});
@@ -54,6 +61,15 @@ class _ConnexionState extends State<Connexion> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    FirebaseAuth.instance
+        .authStateChanges()
+        .listen((User? user) {
+      if (user == null) {
+        print('User is currently signed out!');
+      } else {
+        print('User is signed in!');
+      }
+    });
     fastConnexion();
     is_Enabled = true;
     is_loading = false;
@@ -118,7 +134,7 @@ class _ConnexionState extends State<Connexion> {
                         }
                       ),
                     ),
-                    const SizedBox(width: 40,),
+                    const SizedBox(width: 5,),
                     Expanded(
                       flex: 1,
                       child: ElevatedButton(
@@ -141,7 +157,33 @@ class _ConnexionState extends State<Connexion> {
                             )
                             :  Text(S.of(context)!.connection),
                       ),
-                    )
+                    ),
+                    const SizedBox(width: 5,),
+                    Expanded(
+                      flex: 1,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          if(is_Enabled){
+                            FocusScope.of(context).unfocus();
+                            User? user = await signinWithGoogle();
+                            print(user);
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          elevation: is_Enabled? 2 : 0,
+                        ),
+
+                        child: is_loading
+                            ? const SizedBox(
+                          height: 20, width: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                          ),
+                        )
+                            :  Text('Google'),
+                      ),
+                    ),
+
                   ],
                 )
 
@@ -152,6 +194,34 @@ class _ConnexionState extends State<Connexion> {
     );
   }
 
+  Future<User?> signinWithGoogle() async {
+    try{
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if(googleUser == null){
+        return null;
+      }
+      //Details de l'authentification du compte Google
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      // Create a new credential for Firebase
+      final OAuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // Sign in to Firebase using the Google credential
+      final UserCredential userCredential = await _auth.signInWithCredential(credential);
+      return userCredential.user;
+    }catch(e){
+      print("Error during Google sign-in: $e");
+      return null;
+    }
+  }
+
+  Future<void> signOut() async {
+    await _auth.signOut();
+    await _googleSignIn.signOut();
+  }
 
   void connexion(String username, String password, BuildContext context) async{
     setState_button(false, true);
