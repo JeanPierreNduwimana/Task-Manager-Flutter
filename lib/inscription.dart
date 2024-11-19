@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'accueil.dart';
 import 'connexion.dart';
 import 'transfer.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'app_service.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';

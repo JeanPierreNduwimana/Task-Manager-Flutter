@@ -20,3 +20,5 @@ flutter:
 sdk: flutter
 dio: ^5.6.0
 shared_preferences: ^2.0.15
+
+Installer Firebase: https://firebase.google.com/docs/flutter/setup?hl=fr&platform=ios
