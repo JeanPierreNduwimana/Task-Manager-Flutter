@@ -51,14 +51,14 @@ class AccueilState extends State<Accueil> with WidgetsBindingObserver {
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    getListTaches();
+   // getListTaches();
   }
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     // TODO: implement didChangeAppLifecycleState
    // super.didChangeAppLifecycleState(state);
     if(state == AppLifecycleState.resumed){
-      getListTaches();
+     // getListTaches();
     }
     if(state == AppLifecycleState.paused){
       taches = [];

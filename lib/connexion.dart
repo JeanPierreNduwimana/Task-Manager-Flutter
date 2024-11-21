@@ -17,8 +17,10 @@ import 'lib_http.dart';
 
 final TextEditingController username_controller = TextEditingController();
 final TextEditingController password_controller = TextEditingController();
-bool is_Enabled = true;
-bool is_loading = false;
+bool is_EnabledEmailConnection = true;
+bool is_Enabled_GoogleConnexion = true;
+bool is_loadingEmailConnexion = false;
+bool is_loading_GoogleConnexion = false;
 
 FirebaseFirestore _db = FirebaseFirestore.instance;
 FirebaseAuth _auth = FirebaseAuth.instance;
@@ -71,8 +73,8 @@ class _ConnexionState extends State<Connexion> {
       }
     });
     fastConnexion();
-    is_Enabled = true;
-    is_loading = false;
+    is_EnabledEmailConnection = true;
+    is_loadingEmailConnexion = false;
   }
 
   @override
@@ -100,14 +102,24 @@ class _ConnexionState extends State<Connexion> {
             child: Column(
               children: [
                 Text(S.of(context).connection),
-                TextField(
-                  controller: username_controller,
-                  keyboardType: TextInputType.name,
-                  maxLength: 16,
-                  decoration:  InputDecoration(
-                      hintText: S.of(context).username,
-                      hintStyle: TextStyle(color: Colors.black38)
-                  ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: username_controller,
+                        keyboardType: TextInputType.name,
+                        maxLength: 16,
+                        decoration:  InputDecoration(
+                            hintText: S.of(context).username,
+                            hintStyle: TextStyle(color: Colors.black38)
+                        ),
+                      ), 
+                    ),
+                    Expanded(child: Container(
+                        //padding: EdgeInsets.all(12),
+                      margin: const EdgeInsets.only(bottom: 20, left: 8),
+                        child: const Text('@tp1flutter.com', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),)))
+                  ],
                 ),
                 TextField(
                   controller: password_controller,
@@ -139,16 +151,17 @@ class _ConnexionState extends State<Connexion> {
                       flex: 1,
                       child: ElevatedButton(
                         onPressed: () async {
-                          if(is_Enabled){
+                          if(is_EnabledEmailConnection){
                             FocusScope.of(context).unfocus();
-                            connexion(username_controller.text, password_controller.text, context); //HTTP REQUEST
+                            //connexion(username_controller.text, password_controller.text, context); //HTTP REQUEST
+                            firebaseconnexion(username_controller.text, password_controller.text);
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          elevation: is_Enabled? 2 : 0,
+                          elevation: is_EnabledEmailConnection? 2 : 0,
                         ),
 
-                        child: is_loading
+                        child: is_loadingEmailConnexion
                             ? const SizedBox(
                           height: 20, width: 20,
                               child: CircularProgressIndicator(
@@ -163,17 +176,15 @@ class _ConnexionState extends State<Connexion> {
                       flex: 1,
                       child: ElevatedButton(
                         onPressed: () async {
-                          if(is_Enabled){
+                          if(is_Enabled_GoogleConnexion){
                             FocusScope.of(context).unfocus();
-                            User? user = await signinWithGoogle();
-                            print(user);
+                            await signinWithGoogle();
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          elevation: is_Enabled? 2 : 0,
+                          elevation: is_Enabled_GoogleConnexion? 2 : 0,
                         ),
-
-                        child: is_loading
+                        child: is_loading_GoogleConnexion
                             ? const SizedBox(
                           height: 20, width: 20,
                           child: CircularProgressIndicator(
@@ -194,7 +205,9 @@ class _ConnexionState extends State<Connexion> {
     );
   }
 
-  Future<User?> signinWithGoogle() async {
+  Future<void> signinWithGoogle() async {
+    setState_EnablingButton(false);
+    setState_LoadingButton(false, true);
     try{
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if(googleUser == null){
@@ -211,20 +224,21 @@ class _ConnexionState extends State<Connexion> {
 
       // Sign in to Firebase using the Google credential
       final UserCredential userCredential = await _auth.signInWithCredential(credential);
-      return userCredential.user;
+
+
+      Navigator.push(context,MaterialPageRoute(builder: (context) => AccueilPage(username: userCredential.user?.email ?? "no Email" )));
+      setState_EnablingButton(true);
+      setState_LoadingButton(false, false);
     }catch(e){
       print("Error during Google sign-in: $e");
       return null;
     }
   }
 
-  Future<void> signOut() async {
-    await _auth.signOut();
-    await _googleSignIn.signOut();
-  }
 
   void connexion(String username, String password, BuildContext context) async{
-    setState_button(false, true);
+    setState_EnablingButton(false);
+    setState_LoadingButton(true, false);
     SignInRequest req = SignInRequest();
     req.username = username;
     req.password = password;
@@ -233,7 +247,8 @@ class _ConnexionState extends State<Connexion> {
       afficherMessage(S.of(context)!.emptyfields, context, 3);
       Future.delayed(const Duration(seconds: 2), (){
         setState(() {
-          setState_button(true, false);  // Re-enable the button after 2 seconds
+          setState_EnablingButton(true);// Re-enable the button after 2 seconds
+          setState_LoadingButton(false, false);
         });});
     }else {
       var response;
@@ -244,19 +259,22 @@ class _ConnexionState extends State<Connexion> {
           if(e.response?.data != null){
             erreurServeur(e.response!.data.toString(), context);
             Future.delayed(const Duration(seconds: 3), (){
-              setState_button(true, false);});
+            setState_EnablingButton(true);
+            setState_LoadingButton(false,false);});
           }
           if(e.type == DioExceptionType.connectionError){
             erreurServeur("connectionError", context);
             Future.delayed(const Duration(seconds: 2), (){
-              setState_button(true, false);});
+              setState_EnablingButton(true);
+              setState_LoadingButton(false,false);});
           }
         }
         else{
           erreurServeur("UnkownError", context);
           Future.delayed(const Duration(seconds: 2), (){
             setState(() {
-              setState_button(true, false);  // Re-enable the button after 2 seconds
+              setState_EnablingButton(true); // Re-enable the button after 2 seconds
+              setState_LoadingButton(false,false);
             });});
         }
       }finally{
@@ -269,6 +287,40 @@ class _ConnexionState extends State<Connexion> {
         afficherMessage('Bienvenue ${response.username} 🎉', context, 3);
       }
     }
+  }
+
+  Future<void> firebaseconnexion(String username, String loginPassword) async {
+    setState_EnablingButton(false);
+    setState_LoadingButton(true, false);
+
+    if(username == "" || loginPassword == ""){
+      afficherMessage(S.of(context)!.emptyfields, context, 3);
+      Future.delayed(const Duration(seconds: 2), (){
+        setState(() {
+          setState_EnablingButton(true);// Re-enable the button after 2 seconds
+          setState_LoadingButton(false, false);
+        });});
+    }else{
+      String loginEmail = username + "@tp1flutter.com";
+
+
+      try{
+        UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+          email: loginEmail,
+          password: loginPassword,
+        );
+
+        Navigator.push(context,MaterialPageRoute(builder: (context) => AccueilPage(username: userCredential.user?.email ?? "no Email" )));
+      } on FirebaseAuthException catch (e){
+        print("Error during Google sign-in: $e");
+      }finally{
+        setState_EnablingButton(true);
+        setState_LoadingButton(false,false);
+      }
+    }
+
+
+
   }
 
   void fastConnexion() async {
@@ -298,10 +350,17 @@ class _ConnexionState extends State<Connexion> {
     }
   }
 
-  void setState_button(bool _is_Enabled, bool _is_loading){
+  void setState_EnablingButton(bool _is_Enabled){
     setState(() {
-      is_Enabled = _is_Enabled;
-      is_loading = _is_loading;
+      is_EnabledEmailConnection = _is_Enabled;
+      is_Enabled_GoogleConnexion = _is_Enabled;
+    });
+  }
+
+  void setState_LoadingButton(bool _emailConnexion, bool _googleConnexoin ){
+    setState(() {
+      is_loadingEmailConnexion = _emailConnexion;
+      is_loading_GoogleConnexion = _googleConnexoin;
     });
   }
 

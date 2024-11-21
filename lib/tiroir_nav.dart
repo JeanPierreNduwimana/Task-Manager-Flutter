@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tp1_flutter/connexion.dart';
 import 'package:tp1_flutter/creation_tache.dart';
@@ -14,7 +16,8 @@ class LeTiroir extends StatefulWidget {
   @override
   State<LeTiroir> createState() => LeTiroirState();
 }
-
+FirebaseAuth _auth = FirebaseAuth.instance;
+GoogleSignIn _googleSignIn = GoogleSignIn();
 class LeTiroirState extends State<LeTiroir> {
   
   bool isDisconnecting = false;
@@ -87,7 +90,7 @@ class LeTiroirState extends State<LeTiroir> {
               : const Text("Déconnexion"),
           onTap: () {
             if(!isDisconnecting){
-              deconnexion();
+              firebaseSignOut();
             }
             // Then close the drawer
           },
@@ -110,9 +113,6 @@ class LeTiroirState extends State<LeTiroir> {
     try{
       await signout();  
     }finally{
-      setState(() {
-        isDisconnecting = false;  
-      });
       final prefs = await SharedPreferences.getInstance();
       prefs.remove('username');
       prefs.remove('password');
@@ -120,9 +120,41 @@ class LeTiroirState extends State<LeTiroir> {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => const Connexion())
       );
+      setState(() {
+        isDisconnecting = false;
+      });
      // Navigator.of(context).pushReplacement(newRoute)
     }
+
+
+
     
+  }
+
+  Future<void> firebaseSignOut() async {
+    setState(() {
+      isDisconnecting = true;
+    });
+    try{
+      await _auth.signOut();
+      await _googleSignIn.signOut();
+    }catch(e){
+      print("Error during Google sign-in: $e");
+      return null;
+    }finally{
+      setState(() {
+        isDisconnecting = false;
+      });
+      final prefs = await SharedPreferences.getInstance();
+      prefs.remove('username');
+      prefs.remove('password');
+      //Navigator.pushReplacementNamed(context, '/connexion');
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const Connexion())
+      );
+      // Navigator.of(context).pushReplacement(newRoute)
+    }
+
   }
 }
 
