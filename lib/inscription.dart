@@ -16,14 +16,14 @@ class InscriptionPageLess extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return MaterialApp(
-      localizationsDelegates: const [
+    return const MaterialApp(
+      localizationsDelegates: [
         S.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [
+      supportedLocales: [
         Locale('en', ''), // English, no country code
         Locale('fr', ''), // Spanish, no country code
       ],
@@ -75,14 +75,24 @@ class _InscriptionPageState extends State<InscriptionPage> {
                 child: Column(
                   children: [
                     Text(S.of(context).inscription),
-                    TextField(
-                      controller: username_controller,
-                      keyboardType: TextInputType.name,
-                      maxLength: 16,
-                      decoration: InputDecoration(
-                          hintText: S.of(context).username,
-                          hintStyle: TextStyle(color: Colors.black38)
-                      ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: username_controller,
+                            keyboardType: TextInputType.name,
+                            maxLength: 16,
+                            decoration:  InputDecoration(
+                                hintText: S.of(context).username,
+                                hintStyle: TextStyle(color: Colors.black38)
+                            ),
+                          ),
+                        ),
+                        Expanded(child: Container(
+                          //padding: EdgeInsets.all(12),
+                            margin: const EdgeInsets.only(bottom: 20, left: 8),
+                            child: const Text('@tp3flutter.com', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),)))
+                      ],
                     ),
                     TextFormField(
                       controller: password_controller,
@@ -132,7 +142,7 @@ class _InscriptionPageState extends State<InscriptionPage> {
                             onPressed: () async {
                               if(is_Enabled){
                                 FocusScope.of(context).unfocus();
-                                inscription(username_controller.text, password_controller.text); //HTTP REQUEST
+                                inscription(username_controller.text, password_controller.text,confirm_password_controller.text); //HTTP REQUEST
                               }
                             },
                             style: ElevatedButton.styleFrom(
@@ -160,60 +170,54 @@ class _InscriptionPageState extends State<InscriptionPage> {
   }
 
   bool passwordError = false;
-/*
-  void inscription(String username, String password,String confirmpassword, BuildContext context) async {
-    setState_button(false,true);
-    SignUpRequest req = SignUpRequest();
-    req.username = username;
-    req.password = password;
-    if (!validation(username, password, confirmpassword)) {
 
-      var response;
-      try{
-        response = await signup(req);
-      }catch(e){
-        if(e is DioException){
-          if(e.response?.data != null){
-            erreurServeur(e.response!.data.toString(), context);
-            Future.delayed(const Duration(seconds: 3), (){
-              setState_button(true,false);});
-          }
-          if(e.type == DioExceptionType.connectionError){
-            erreurServeur("connectionError", context);
-            Future.delayed(const Duration(seconds: 2), (){
-                setState_button(true,false);;});
-          }
+  Future<void> inscription(String username, String password,String confirmpassword) async {
+
+    setState_button(false,true);
+    String email = '${username.replaceAll(' ', '')}@tp3flutter.com';
+
+    if (!validation(username, password, confirmpassword)) {
+      try {
+        UserCredential userCredential = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+        //ajout dans la bd firestore
+        await FirebaseFirestore.instance.collection('users').doc(
+            userCredential.user!.uid).set({
+          'username': username,
+          'email': email,
+        });
+
+        Navigator.push(context,MaterialPageRoute(builder: (context) => AccueilPage(username: userCredential.user?.email ?? "no name found")));
+        afficherMessage('${S.of(context).welcome} ${userCredential.user?.email ?? "no name found"} 🎉', context, 3);
+
+      } on FirebaseAuthException catch (e) {
+        if(e.code == "email-already-in-use"){
+          erreurServeur("UsernameAlreadyTaken", context);
+          Future.delayed(const Duration(seconds: 2), (){
+            setState_button(true,false);;});
+        }else if(e.code == "weak-password"){
+          erreurServeur("PasswordTooShort", context);
+          Future.delayed(const Duration(seconds: 2), (){
+            setState_button(true,false);;});
+        }else if(e.code == "network-request-failed"){
+          erreurServeur("connectionError", context);
+          Future.delayed(const Duration(seconds: 2), (){
+            setState(() {
+              setState_button(true,false);
+            });});
         }else{
-          erreurServeur("UnkownError", context);
+          afficherMessage('There is an error: ${e.code}', context, 2);
         }
-      }finally{
-        Navigator.push(context,MaterialPageRoute(builder: (context) => AccueilPage(username: response.username)));
-        afficherMessage('${S.of(context).welcome} ${response.username} 🎉', context, 3);
+
       }
     }else{
       Future.delayed(const Duration(seconds: 2), (){
-      setState_button(true,false);});
+        setState_button(true,false);});
     }
-  }
-*/
 
-  Future<void> inscription(String username, String password) async {
-    String email = username + '@tp1flutter.com';
-
-    try {
-      UserCredential userCredential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      await FirebaseFirestore.instance.collection('users').doc(
-          userCredential.user!.uid).set({
-        'username': username,
-        'email': email,
-      });
-    } catch (e) {
-      print('Erreur d\'inscription: $e');
-    }
   }
 
   bool validation(String username, String password,String confirmpassword){

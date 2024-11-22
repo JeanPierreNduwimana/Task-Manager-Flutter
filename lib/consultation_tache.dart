@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -10,7 +12,10 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'app_service.dart';
 import 'generated/l10n.dart';
 import 'lib_http.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
+FirebaseFirestore _db = FirebaseFirestore.instance;
+FirebaseAuth _auth = FirebaseAuth.instance;
 class ConsultationTachePage extends StatelessWidget {
 
   final String id;
@@ -119,20 +124,25 @@ class _ConsultationState extends State<ConsultationTache>  with WidgetsBindingOb
     isuploading = false;
 
   }
-  Future<void> sendImage(String imagePath, int taskId) async{
-    FormData formData = FormData.fromMap({
-      "file" : await MultipartFile.fromFile(imagePath, filename: pickedImage!.name),
-      "taskID": taskId
-    });
-    await uploadImage(formData);
-  }
   Future<TaskDetailPhotoResponse> DetailsTache(String id) async{
     setState(() {
       localImageAvailable = false;
       isLoading = true;
     });
+
     try{
-      tache = await getdetailsTache(id);
+      DocumentSnapshot taskSnapshot = await userDoc().get();
+      if(taskSnapshot.exists){
+        var taskData = taskSnapshot.data() as Map<String, dynamic>;
+        tache.id = taskSnapshot.id;
+        tache.deadline = taskData['deadline'];
+        tache.name = taskData['name'];
+        tache.percentageDone = taskData['percentageDone'];
+        tache.percentageTimeSpent = taskData['percentageTimeSpent'];
+        tache.photoUrl = taskData['photoUrl'];
+        tache.dateCreation = taskData['dateCreation'];
+      }
+     // tache = await getdetailsTache(id);
     }finally{
       _sliderValue = double.parse(tache.percentageDone.toString());
       setState(() {
@@ -143,11 +153,28 @@ class _ConsultationState extends State<ConsultationTache>  with WidgetsBindingOb
 
 
   }
-  Future<void> MiseAJourProgression(String id,String valeur) async {
-    var response = await updateProgress(id, valeur);
-    if(response == '200'){
-      DetailsTache(id);
+  Future<void> MiseAJourProgression(String? imageUrl, int valeur) async {
+    //var response = await updateProgress(id, valeur);
+   // if(response == '200'){
+   //   DetailsTache(id);
+   // }
+    if(imageUrl != null){
+      await userDoc().update({
+        'photoUrl' : imageUrl,
+        'percentageDone' : valeur,
+      });
+    }else{
+      await userDoc().update({
+        'percentageDone' : valeur,
+      });
     }
+
+
+  }
+
+  DocumentReference userDoc() {
+    User? user = _auth.currentUser;
+    return _db.collection('users').doc(user?.uid).collection('Tasks').doc(widget.id);
   }
 
   Widget buildBody(){
@@ -247,7 +274,7 @@ class _ConsultationState extends State<ConsultationTache>  with WidgetsBindingOb
                   ),
                   borderRadius: BorderRadius.circular(12.0),
                 ),
-                child: (!localImageAvailable && tache.photoId != 0)
+                child: (!localImageAvailable && tache.photoUrl != '')
                 ? Container(
                   decoration: const BoxDecoration(
                       image: DecorationImage(
@@ -255,7 +282,7 @@ class _ConsultationState extends State<ConsultationTache>  with WidgetsBindingOb
                       )
                   ),
                   child: Image.network(
-                      ImageUrl(tache.photoId),
+                      tache.photoUrl,
                       height: 80, width: 80, fit: BoxFit.cover,
                       loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress){
                         if(loadingProgress == null){
@@ -294,18 +321,29 @@ class _ConsultationState extends State<ConsultationTache>  with WidgetsBindingOb
     try{
       if(imagePath != ""){
         try{
-          await sendImage(imagePath, tache.id);} catch(e){
+          //await sendImage(imagePath, 2);
+          var storageReference = FirebaseStorage.instance.ref().child('images/${DateTime.now().millisecondsSinceEpoch}.jpg');
+          late File _image = File(imagePath);
+          UploadTask uploadTask = storageReference.putFile(_image);
+          TaskSnapshot taskSnapshot = await uploadTask;
+          String downloadURL = await taskSnapshot.ref.getDownloadURL();
+          await MiseAJourProgression(downloadURL,_sliderValue.round());
+        } catch(e){
           afficherMessage(S.of(context).errorUploadImage, context,10);
           return;
         }
-        await MiseAJourProgression(tache.id.toString(), _sliderValue.round().toString());
       }else{
-        MiseAJourProgression(tache.id.toString(), _sliderValue.round().toString());
+        MiseAJourProgression( null,_sliderValue.round());
       }
+    }catch(e) {
+      afficherMessage(S.of(context).errorUploadImage, context,10);
+      return;
     }finally{
-      afficherMessage(S.of(context).taskUpdatedMessage, context,3);
+      DetailsTache(widget.id); //rechargement de la tâche
     }
+    afficherMessage(S.of(context).taskUpdatedMessage, context,3);
   }
+
 
   void btnSupprimer() async {
     try{

@@ -47,22 +47,24 @@ Map<String, dynamic> _$SignInResponseToJson(SignInResponse instance) =>
 HomeItemPhotoResponse _$HomeItemPhotoResponseFromJson(
         Map<String, dynamic> json) =>
     HomeItemPhotoResponse()
-      ..id = (json['id'] as num).toInt()
-      ..photoId = (json['photoId'] as num).toInt()
+      ..id = json['id'] as String
+      ..photoUrl = json['photoUrl'] as String
       ..name = json['name'] as String
       ..percentageDone = (json['percentageDone'] as num).toInt()
       ..percentageTimeSpent = (json['percentageTimeSpent'] as num).toInt()
-      ..deadline = json['deadline'] as String;
+      ..deadline = json['deadline'] as String
+      ..dateCreation = json['dateCreation'] as String;
 
 Map<String, dynamic> _$HomeItemPhotoResponseToJson(
         HomeItemPhotoResponse instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'photoId': instance.photoId,
+      'photoUrl': instance.photoUrl,
       'name': instance.name,
       'percentageDone': instance.percentageDone,
       'percentageTimeSpent': instance.percentageTimeSpent,
       'deadline': instance.deadline,
+      'dateCreation': instance.dateCreation,
     };
 
 AddTaskRequest _$AddTaskRequestFromJson(Map<String, dynamic> json) =>
@@ -71,7 +73,8 @@ AddTaskRequest _$AddTaskRequestFromJson(Map<String, dynamic> json) =>
       ..name = json['name'] as String
       ..percentageDone = (json['percentageDone'] as num).toInt()
       ..percentageTimeSpent = (json['percentageTimeSpent'] as num).toInt()
-      ..deadline = json['deadline'] as String;
+      ..deadline = json['deadline'] as String
+      ..dateCreation = json['dateCreation'] as String;
 
 Map<String, dynamic> _$AddTaskRequestToJson(AddTaskRequest instance) =>
     <String, dynamic>{
@@ -80,25 +83,28 @@ Map<String, dynamic> _$AddTaskRequestToJson(AddTaskRequest instance) =>
       'percentageDone': instance.percentageDone,
       'percentageTimeSpent': instance.percentageTimeSpent,
       'deadline': instance.deadline,
+      'dateCreation': instance.dateCreation,
     };
 
 TaskDetailPhotoResponse _$TaskDetailPhotoResponseFromJson(
         Map<String, dynamic> json) =>
     TaskDetailPhotoResponse()
-      ..id = (json['id'] as num).toInt()
-      ..photoId = (json['photoId'] as num).toInt()
+      ..id = json['id'] as String
+      ..photoUrl = json['photoUrl'] as String
       ..name = json['name'] as String
       ..percentageDone = (json['percentageDone'] as num).toInt()
       ..percentageTimeSpent = (json['percentageTimeSpent'] as num).toInt()
-      ..deadline = json['deadline'] as String;
+      ..deadline = json['deadline'] as String
+      ..dateCreation = json['dateCreation'] as String;
 
 Map<String, dynamic> _$TaskDetailPhotoResponseToJson(
         TaskDetailPhotoResponse instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'photoId': instance.photoId,
+      'photoUrl': instance.photoUrl,
       'name': instance.name,
       'percentageDone': instance.percentageDone,
       'percentageTimeSpent': instance.percentageTimeSpent,
       'deadline': instance.deadline,
+      'dateCreation': instance.dateCreation,
     };

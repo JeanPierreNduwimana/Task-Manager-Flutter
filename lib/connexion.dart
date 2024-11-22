@@ -118,7 +118,7 @@ class _ConnexionState extends State<Connexion> {
                     Expanded(child: Container(
                         //padding: EdgeInsets.all(12),
                       margin: const EdgeInsets.only(bottom: 20, left: 8),
-                        child: const Text('@tp1flutter.com', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),)))
+                        child: const Text('@tp3flutter.com', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),)))
                   ],
                 ),
                 TextField(
@@ -290,6 +290,7 @@ class _ConnexionState extends State<Connexion> {
   }
 
   Future<void> firebaseconnexion(String username, String loginPassword) async {
+
     setState_EnablingButton(false);
     setState_LoadingButton(true, false);
 
@@ -301,18 +302,36 @@ class _ConnexionState extends State<Connexion> {
           setState_LoadingButton(false, false);
         });});
     }else{
-      String loginEmail = username + "@tp1flutter.com";
-
-
+      String loginEmail = username + "@tp3flutter.com";
       try{
         UserCredential userCredential = await _auth.signInWithEmailAndPassword(
           email: loginEmail,
           password: loginPassword,
         );
-
         Navigator.push(context,MaterialPageRoute(builder: (context) => AccueilPage(username: userCredential.user?.email ?? "no Email" )));
       } on FirebaseAuthException catch (e){
-        print("Error during Google sign-in: $e");
+        if(e.code == "invalid-credential"){
+          erreurServeur("InternalAuthenticationServiceException", context);
+          Future.delayed(const Duration(seconds: 2), (){
+            setState(() {
+              setState_EnablingButton(true);// Re-enable the button after 2 seconds
+              setState_LoadingButton(false, false);
+            });});
+        }else if(e.code == "network-request-failed"){
+          erreurServeur("connectionError", context);
+          Future.delayed(const Duration(seconds: 2), (){
+            setState(() {
+              setState_EnablingButton(true);// Re-enable the button after 2 seconds
+              setState_LoadingButton(false, false);
+            });});
+        }else{
+          afficherMessage("Error during signup", context, 2);
+          Future.delayed(const Duration(seconds: 2), (){
+            setState(() {
+              setState_EnablingButton(true);// Re-enable the button after 2 seconds
+              setState_LoadingButton(false, false);
+            });});
+        }
       }finally{
         setState_EnablingButton(true);
         setState_LoadingButton(false,false);
