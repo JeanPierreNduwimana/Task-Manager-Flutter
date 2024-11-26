@@ -88,6 +88,7 @@ class TaskDetailPhotoResponse {
 
   String id = '';
   String photoUrl = '';
+  String imageName = '';
   String name = '';
   int percentageDone = 0;
   int percentageTimeSpent = 0;

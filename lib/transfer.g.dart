@@ -91,6 +91,7 @@ TaskDetailPhotoResponse _$TaskDetailPhotoResponseFromJson(
     TaskDetailPhotoResponse()
       ..id = json['id'] as String
       ..photoUrl = json['photoUrl'] as String
+      ..imageName = json['imageName'] as String
       ..name = json['name'] as String
       ..percentageDone = (json['percentageDone'] as num).toInt()
       ..percentageTimeSpent = (json['percentageTimeSpent'] as num).toInt()
@@ -102,6 +103,7 @@ Map<String, dynamic> _$TaskDetailPhotoResponseToJson(
     <String, dynamic>{
       'id': instance.id,
       'photoUrl': instance.photoUrl,
+      'imageName': instance.imageName,
       'name': instance.name,
       'percentageDone': instance.percentageDone,
       'percentageTimeSpent': instance.percentageTimeSpent,

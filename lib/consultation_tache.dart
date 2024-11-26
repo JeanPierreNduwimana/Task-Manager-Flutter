@@ -124,6 +124,7 @@ class _ConsultationState extends State<ConsultationTache>  with WidgetsBindingOb
     isuploading = false;
 
   }
+
   Future<TaskDetailPhotoResponse> DetailsTache(String id) async{
     setState(() {
       localImageAvailable = false;
@@ -153,21 +154,30 @@ class _ConsultationState extends State<ConsultationTache>  with WidgetsBindingOb
 
 
   }
-  Future<void> MiseAJourProgression(String? imageUrl, int valeur) async {
-    //var response = await updateProgress(id, valeur);
-   // if(response == '200'){
-   //   DetailsTache(id);
-   // }
-    if(imageUrl != null){
+
+  Future<void> MiseAJourProgression(String? ImageName,String? imageUrl, int valeur) async {
+
+    if(imageUrl != null && ImageName != null){
       await userDoc().update({
+        'imageName' : ImageName,
         'photoUrl' : imageUrl,
         'percentageDone' : valeur,
       });
+
+      if(tache.imageName != ''){
+        //J'efface l'ancienne photo
+        try{
+          Reference currentImageRef = FirebaseStorage.instance.ref().child('images/${tache.imageName}');
+          await currentImageRef.delete();
+        }catch(e){}
+      }
+
     }else{
       await userDoc().update({
         'percentageDone' : valeur,
       });
     }
+
 
 
   }
@@ -322,18 +332,19 @@ class _ConsultationState extends State<ConsultationTache>  with WidgetsBindingOb
       if(imagePath != ""){
         try{
           //await sendImage(imagePath, 2);
-          var storageReference = FirebaseStorage.instance.ref().child('images/${DateTime.now().millisecondsSinceEpoch}.jpg');
+          String ImageName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
+          var storageReference = FirebaseStorage.instance.ref().child('images/$ImageName');
           late File _image = File(imagePath);
           UploadTask uploadTask = storageReference.putFile(_image);
           TaskSnapshot taskSnapshot = await uploadTask;
           String downloadURL = await taskSnapshot.ref.getDownloadURL();
-          await MiseAJourProgression(downloadURL,_sliderValue.round());
+          await MiseAJourProgression(ImageName,downloadURL,_sliderValue.round());
         } catch(e){
           afficherMessage(S.of(context).errorUploadImage, context,10);
           return;
         }
       }else{
-        MiseAJourProgression( null,_sliderValue.round());
+        MiseAJourProgression( null,null,_sliderValue.round());
       }
     }catch(e) {
       afficherMessage(S.of(context).errorUploadImage, context,10);
