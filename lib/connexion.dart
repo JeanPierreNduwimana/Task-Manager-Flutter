@@ -22,32 +22,8 @@ bool is_Enabled_GoogleConnexion = true;
 bool is_loadingEmailConnexion = false;
 bool is_loading_GoogleConnexion = false;
 
-FirebaseFirestore _db = FirebaseFirestore.instance;
 FirebaseAuth _auth = FirebaseAuth.instance;
 GoogleSignIn _googleSignIn = GoogleSignIn();
-
-class ConnexionPage extends StatelessWidget {
-  const ConnexionPage({super.key});
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    return const MaterialApp(
-      localizationsDelegates: [
-        S.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: [
-        Locale('en', ''), // English, no country code
-        Locale('fr', ''), // Spanish, no country code
-      ],
-      home: Connexion(),
-    );
-  }
-
-}
-
 
 class Connexion extends StatefulWidget {
   const Connexion({super.key});
@@ -82,7 +58,7 @@ class _ConnexionState extends State<Connexion> {
 
     return Scaffold(
         appBar: AppBar(
-          title: Text(S.of(context)!.connection),
+          title: Text(S.of(context).connection),
           backgroundColor: Colors.deepPurple,
         ),
       body: fastConnexionActive
@@ -226,7 +202,7 @@ class _ConnexionState extends State<Connexion> {
       final UserCredential userCredential = await _auth.signInWithCredential(credential);
 
 
-      Navigator.push(context,MaterialPageRoute(builder: (context) => AccueilPage(username: userCredential.user?.email ?? "no Email" )));
+      Navigator.push(context,MaterialPageRoute(builder: (context) => Accueil(username: userCredential.user?.email ?? "no Email" )));
       setState_EnablingButton(true);
       setState_LoadingButton(false, false);
     }catch(e){
@@ -283,7 +259,7 @@ class _ConnexionState extends State<Connexion> {
         prefs.setString('username', response.username);
         prefs.setString('password', password);
        // Navigator.pushReplacementNamed(context, '/accueil', arguments: name);
-        Navigator.push(context,MaterialPageRoute(builder: (context) => AccueilPage(username: username)));
+        Navigator.push(context,MaterialPageRoute(builder: (context) => Accueil(username: username)));
         afficherMessage('Bienvenue ${response.username} 🎉', context, 3);
       }
     }
@@ -308,7 +284,7 @@ class _ConnexionState extends State<Connexion> {
           email: loginEmail,
           password: loginPassword,
         );
-        Navigator.push(context,MaterialPageRoute(builder: (context) => AccueilPage(username: userCredential.user?.email ?? "no Email" )));
+        Navigator.push(context,MaterialPageRoute(builder: (context) => Accueil(username: userCredential.user?.email ?? "no Email" )));
       } on FirebaseAuthException catch (e){
         if(e.code == "invalid-credential"){
           erreurServeur("InternalAuthenticationServiceException", context);
@@ -363,7 +339,7 @@ class _ConnexionState extends State<Connexion> {
       fastConnexionActive = false;
       Future.delayed(const Duration(seconds: 4), (){
        // Navigator.pushReplacementNamed(context, '/accueil', arguments: name);
-        Navigator.push(context,MaterialPageRoute(builder: (context) => AccueilPage(username: username)));
+        Navigator.push(context,MaterialPageRoute(builder: (context) => Accueil(username: username)));
         afficherMessage('${S.of(context).welcome} ${response.username} 🎉', context, 3);
         });
     }

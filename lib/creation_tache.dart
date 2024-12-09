@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:tp1_flutter/app_service.dart';
 import 'accueil.dart';
@@ -5,31 +7,12 @@ import 'tiroir_nav.dart';
 import 'transfer.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'generated/l10n.dart';
-import 'lib_http.dart';
+import 'package:intl/intl.dart';
 
 
-class CreationTachePage extends StatelessWidget {
-  final String username;
-  const CreationTachePage({super.key, required this.username});
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
+FirebaseFirestore _db = FirebaseFirestore.instance;
+FirebaseAuth _auth = FirebaseAuth.instance;
 
-    return MaterialApp(
-      localizationsDelegates: const [
-        S.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('en', ''), // English, no country code
-        Locale('fr', ''), // Spanish, no country code
-      ],
-      home: CreationTache(username: username),
-    );
-  }
-}
 
 class CreationTache extends StatefulWidget {
   final String username;
@@ -51,7 +34,6 @@ class _CreationTacheState extends State<CreationTache> {
 
   @override
   Widget build(BuildContext context) {
-    //final String username = ModalRoute.of(context)!.settings.arguments as String;
     return Scaffold(
         appBar: AppBar(
           title: Text(S.of(context).createTask),
@@ -171,7 +153,7 @@ class _CreationTacheState extends State<CreationTache> {
           tooltip: 'Increment',
           onPressed: (){
            // Navigator.pushNamed(context, '/accueil', arguments: username);
-            Navigator.push(context,MaterialPageRoute(builder: (context) => AccueilPage( username: widget.username)));
+            Navigator.push(context,MaterialPageRoute(builder: (context) => Accueil( username: widget.username)));
           },
           child: const Icon(Icons.home, color: Colors.white, size: 28),
         ),
@@ -187,14 +169,22 @@ class _CreationTacheState extends State<CreationTache> {
       }else {
 
         String date = '$annee-$mois-$jour';
-        AddTaskRequest req = new AddTaskRequest();
+        User? user = _auth.currentUser;
+        CollectionReference tasks = _db.collection('users').doc(user?.uid).collection('Tasks');
 
-        req.name = name;
-        req.deadline = date;
+        await tasks.add({
+          'dateCreation' : DateFormat('yyyy-MM-dd').format(DateTime.now()),
+          'deadline' : date,
+          'imageName' : '',
+          'name' : name,
+          'percentageDone' : 0,
+          'percentageTimeSpent' : 0,
+          'photoUrl' : '',
+          'isDeleted' : false,
+          'userId' : user?.uid
+        });
 
-        await AddTask(req);
-       // Navigator.pushNamed(context, '/accueil', arguments: username);
-        Navigator.push(context,MaterialPageRoute(builder: (context) => AccueilPage(username: username)));
+        Navigator.push(context,MaterialPageRoute(builder: (context) => Accueil(username: username)));
       }
 
   }

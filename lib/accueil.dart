@@ -14,7 +14,7 @@ import 'lib_http.dart';
 FirebaseFirestore _db = FirebaseFirestore.instance;
 FirebaseAuth _auth = FirebaseAuth.instance;
 
-class AccueilPage extends StatelessWidget{
+/*class AccueilPage extends StatelessWidget{
   final String username;
   const AccueilPage({super.key, required this.username});
   @override
@@ -34,7 +34,7 @@ class AccueilPage extends StatelessWidget{
       home: Accueil(username: username,),
     );
   }
-}
+}*/
 
 class Accueil extends StatefulWidget {
   final String username;
@@ -76,8 +76,11 @@ class AccueilState extends State<Accueil> with WidgetsBindingObserver {
           tache.percentageTimeSpent = taskData['percentageTimeSpent'];
           tache.photoUrl = taskData['photoUrl'];
           tache.dateCreation = taskData['dateCreation'];
+          tache.isDeleted = taskData['isDeleted'];
 
-          taches.add(tache);
+          if(tache.isDeleted == false){
+            taches.add(tache);
+          }
         }
       }
     }on FirebaseAuthException catch (e){
@@ -105,18 +108,7 @@ class AccueilState extends State<Accueil> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     //final String username = ModalRoute.of(context)!.settings.arguments as String;
-    return MaterialApp(
-      localizationsDelegates: const [
-        S.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('en', ''), // English, no country code
-        Locale('fr', ''), // Spanish, no country code
-      ],
-      home: Scaffold(
+    return Scaffold(
         appBar: AppBar(
           title: const Text('Accueil'),
           backgroundColor: Colors.deepPurple,
@@ -129,12 +121,11 @@ class AccueilState extends State<Accueil> with WidgetsBindingObserver {
           onPressed: (){
             WidgetsBinding.instance.removeObserver(this); //On arreter l'observer
             //Navigator.pushNamed(context, '/creationtache', arguments: widget.username);
-            Navigator.push(context,MaterialPageRoute(builder: (context) => CreationTachePage( username: widget.username)));
+            Navigator.push(context,MaterialPageRoute(builder: (context) => CreationTache( username: widget.username)));
           },
           child: const Icon(Icons.add, color: Colors.white, size: 28),
         ) : const SizedBox(),
-      ),
-    );
+      );
 
 
 
@@ -160,7 +151,7 @@ class AccueilState extends State<Accueil> with WidgetsBindingObserver {
               }else{
                 WidgetsBinding.instance.removeObserver(this); //On arreter l'observer
                 //Navigator.pushNamed(context, '/creationtache', arguments: this.widget.username);
-                Navigator.push(context,MaterialPageRoute(builder: (context) => CreationTachePage( username: widget.username)));
+                Navigator.push(context,MaterialPageRoute(builder: (context) => CreationTache( username: widget.username)));
               }
             },
                 child: connection_error? Text(S.of(context).reload)

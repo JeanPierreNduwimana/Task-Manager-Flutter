@@ -52,12 +52,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "create": MessageLookupByLibrary.simpleMessage("Create"),
         "createTask": MessageLookupByLibrary.simpleMessage("Create your task"),
         "deconnexion": MessageLookupByLibrary.simpleMessage("Log Out"),
-        "delete": MessageLookupByLibrary.simpleMessage("Delete"),
         "deletedTaskMessage": m0,
         "emptyfields":
             MessageLookupByLibrary.simpleMessage("No field can be empty ☹"),
         "errorUploadImage": MessageLookupByLibrary.simpleMessage(
             "The server didn\'t like this image, try another one and it will work, promise 😉"),
+        "hardDelete": MessageLookupByLibrary.simpleMessage("Hard Delete"),
         "home": MessageLookupByLibrary.simpleMessage("Home"),
         "inscription": MessageLookupByLibrary.simpleMessage("Register"),
         "loadindTaskList":
@@ -67,6 +67,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "password": MessageLookupByLibrary.simpleMessage("Password"),
         "progression": MessageLookupByLibrary.simpleMessage("Progression"),
         "reload": MessageLookupByLibrary.simpleMessage("Reload"),
+        "softDelete": MessageLookupByLibrary.simpleMessage("Soft Delete"),
         "taskDetail": MessageLookupByLibrary.simpleMessage("Task Detail"),
         "taskName": MessageLookupByLibrary.simpleMessage("Task Name"),
         "taskUpdatedMessage":

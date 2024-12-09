@@ -16,30 +16,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 
 FirebaseFirestore _db = FirebaseFirestore.instance;
 FirebaseAuth _auth = FirebaseAuth.instance;
-class ConsultationTachePage extends StatelessWidget {
-
-  final String id;
-  final String username;
-  const ConsultationTachePage ({super.key, required this.id, required this.username});
-
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    return MaterialApp(
-      localizationsDelegates: const [
-        S.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('en', ''), // English, no country code
-        Locale('fr', ''), // Spanish, no country code
-      ],
-      home: ConsultationTache(id: id,username: username,),
-    );
-  }
-}
 
 class ConsultationTache extends StatefulWidget {
 
@@ -73,9 +49,8 @@ class _ConsultationState extends State<ConsultationTache>  with WidgetsBindingOb
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-
-      home:  Scaffold(
+    return
+      Scaffold(
         appBar: AppBar(
           title: Text(S.of(context).addTask),
           backgroundColor: Colors.deepPurple,
@@ -92,8 +67,7 @@ class _ConsultationState extends State<ConsultationTache>  with WidgetsBindingOb
               },
                 child: const Icon(Icons.home, color: Colors.white, size: 28),
               ) : const SizedBox(),
-      ),
-    );
+      );
 
 
   }
@@ -138,6 +112,7 @@ class _ConsultationState extends State<ConsultationTache>  with WidgetsBindingOb
         tache.id = taskSnapshot.id;
         tache.deadline = taskData['deadline'];
         tache.name = taskData['name'];
+        tache.imageName = taskData['imageName'];
         tache.percentageDone = taskData['percentageDone'];
         tache.percentageTimeSpent = taskData['percentageTimeSpent'];
         tache.photoUrl = taskData['photoUrl'];
@@ -157,31 +132,29 @@ class _ConsultationState extends State<ConsultationTache>  with WidgetsBindingOb
 
   Future<void> MiseAJourProgression(String? ImageName,String? imageUrl, int valeur) async {
 
+    //Mise à jour de la liaison entre l'image et la tache
     if(imageUrl != null && ImageName != null){
       await userDoc().update({
         'imageName' : ImageName,
         'photoUrl' : imageUrl,
-        'percentageDone' : valeur,
       });
 
+      //J'efface l'ancienne image si elle existe
       if(tache.imageName != ''){
         //J'efface l'ancienne photo
-        try{
-          Reference currentImageRef = FirebaseStorage.instance.ref().child('images/${tache.imageName}');
-          await currentImageRef.delete();
-        }catch(e){}
+        Reference currentImageRef = FirebaseStorage.instance.ref().child('images/${tache.imageName}');
+        await currentImageRef.delete();
       }
-
-    }else{
-      await userDoc().update({
-        'percentageDone' : valeur,
-      });
     }
 
-
+    //Mise à jour de la progression
+    await userDoc().update({
+      'percentageDone' : valeur,
+    });
 
   }
 
+  //Retourne le documentReference de la tache de l'utilisateur courant
   DocumentReference userDoc() {
     User? user = _auth.currentUser;
     return _db.collection('users').doc(user?.uid).collection('Tasks').doc(widget.id);
@@ -319,8 +292,19 @@ class _ConsultationState extends State<ConsultationTache>  with WidgetsBindingOb
 
                 }),
             const SizedBox(height: 40,),
-            ElevatedButton(onPressed:() async {btnMiseAJour();}, child: Text(S.of(context).updateProgression)),
-            ElevatedButton( onPressed:() async{btnSupprimer();}, child: Text(S.of(context).delete)),
+            Column(
+              children: [
+                ElevatedButton(onPressed:() async {btnMiseAJour();}, child: Text(S.of(context).updateProgression)),
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    ElevatedButton( onPressed:() async{btnSupprimer(false);}, child: Text(S.of(context).softDelete)),
+                    ElevatedButton( onPressed:() async{btnSupprimer(true);}, child: Text(S.of(context).hardDelete)),
+                  ],
+                )
+              ],
+            )
           ],
         ),
             ),
@@ -331,20 +315,19 @@ class _ConsultationState extends State<ConsultationTache>  with WidgetsBindingOb
     try{
       if(imagePath != ""){
         try{
-          //await sendImage(imagePath, 2);
-          String ImageName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
-          var storageReference = FirebaseStorage.instance.ref().child('images/$ImageName');
+          String newImagename = '${DateTime.now().millisecondsSinceEpoch}.jpg';
+          var newStoragereference = FirebaseStorage.instance.ref().child('images/$newImagename');
           late File _image = File(imagePath);
-          UploadTask uploadTask = storageReference.putFile(_image);
+          UploadTask uploadTask = newStoragereference.putFile(_image);
           TaskSnapshot taskSnapshot = await uploadTask;
           String downloadURL = await taskSnapshot.ref.getDownloadURL();
-          await MiseAJourProgression(ImageName,downloadURL,_sliderValue.round());
+          await MiseAJourProgression(newImagename,downloadURL,_sliderValue.round());
         } catch(e){
           afficherMessage(S.of(context).errorUploadImage, context,10);
           return;
         }
       }else{
-        MiseAJourProgression( null,null,_sliderValue.round());
+        MiseAJourProgression(null,null,_sliderValue.round());
       }
     }catch(e) {
       afficherMessage(S.of(context).errorUploadImage, context,10);
@@ -356,15 +339,31 @@ class _ConsultationState extends State<ConsultationTache>  with WidgetsBindingOb
   }
 
 
-  void btnSupprimer() async {
-    try{
-      await removeTask(tache);
-    }finally {
-      WidgetsBinding.instance.removeObserver(this); //On arreter l'observer
-      //Navigator.pushNamed(context, '/accueil', arguments: this.widget.username);
-      Navigator.of(context).push(MaterialPageRoute(builder: (context) => Accueil(username: widget.username,)));
-      afficherMessage(S.of(context).deletedTaskMessage(tache.name), context,3);
-    }
+  void btnSupprimer(bool hardDelete) async {
+
+      try{
+        if(hardDelete){
+          //suppression de la tâche
+          userDoc().delete();
+          //Suppression de l'image de la tache si elle existe
+          if(tache.imageName != ''){
+            var storagereference = FirebaseStorage.instance.ref().child('images/${tache.imageName}');
+            storagereference.delete();
+          }
+        }else{
+          //Execution du soft delete
+          userDoc().update({
+            'isDeleted' : true
+          });
+        }
+
+      }finally {
+        WidgetsBinding.instance.removeObserver(this); //On arreter l'observer
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) => Accueil(username: widget.username,)));
+        afficherMessage(S.of(context).deletedTaskMessage(tache.name), context,3);
+      }
+
+
   }
 }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tp1_flutter/accueil.dart';
 import 'package:tp1_flutter/connexion.dart';
+import 'package:tp1_flutter/consultation_tache.dart';
 import 'package:tp1_flutter/creation_tache.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'generated/l10n.dart';
@@ -46,7 +47,8 @@ class MyApp extends StatelessWidget {
       home: const Connexion(),
       routes: {
         '/inscription': (context) => const InscriptionPage(),
-        '/connexion': (context) => const ConnexionPage(),
+        '/connexion': (context) => const Connexion(),
+        '/consultationTache': (context) => ConsultationTache(id: '', username: '',),
       },
     );
   }

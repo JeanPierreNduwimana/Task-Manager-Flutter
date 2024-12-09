@@ -62,6 +62,7 @@ class HomeItemPhotoResponse {
   int percentageTimeSpent = 0;
   String deadline = '';
   String dateCreation = '';
+  bool isDeleted = false;
 
   factory HomeItemPhotoResponse.fromJson(Map<String, dynamic> json) => _$HomeItemPhotoResponseFromJson(json);
   Map<String, dynamic> toJson() => _$HomeItemPhotoResponseToJson(this);
@@ -77,6 +78,7 @@ class AddTaskRequest {
   int percentageTimeSpent = 0;
   String deadline = '';
   String dateCreation = '';
+  bool isDeleted = false;
 
   factory AddTaskRequest.fromJson(Map<String, dynamic> json) => _$AddTaskRequestFromJson(json);
   Map<String, dynamic> toJson() => _$AddTaskRequestToJson(this);

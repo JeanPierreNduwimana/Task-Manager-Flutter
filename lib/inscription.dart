@@ -11,29 +11,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'generated/l10n.dart';
 import 'lib_http.dart';
 
-class InscriptionPageLess extends StatelessWidget {
-
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    return const MaterialApp(
-      localizationsDelegates: [
-        S.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: [
-        Locale('en', ''), // English, no country code
-        Locale('fr', ''), // Spanish, no country code
-      ],
-
-      home: InscriptionPage(),
-    );
-  }
-
-}
-
 class InscriptionPage extends StatefulWidget {
   const InscriptionPage({super.key});
 
@@ -190,7 +167,7 @@ class _InscriptionPageState extends State<InscriptionPage> {
           'email': email,
         });
 
-        Navigator.push(context,MaterialPageRoute(builder: (context) => AccueilPage(username: userCredential.user?.email ?? "no name found")));
+        Navigator.push(context,MaterialPageRoute(builder: (context) => Accueil(username: userCredential.user?.email ?? "no name found")));
         afficherMessage('${S.of(context).welcome} ${userCredential.user?.email ?? "no name found"} 🎉', context, 3);
 
       } on FirebaseAuthException catch (e) {

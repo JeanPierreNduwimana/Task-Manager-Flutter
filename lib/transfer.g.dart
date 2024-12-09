@@ -53,7 +53,8 @@ HomeItemPhotoResponse _$HomeItemPhotoResponseFromJson(
       ..percentageDone = (json['percentageDone'] as num).toInt()
       ..percentageTimeSpent = (json['percentageTimeSpent'] as num).toInt()
       ..deadline = json['deadline'] as String
-      ..dateCreation = json['dateCreation'] as String;
+      ..dateCreation = json['dateCreation'] as String
+      ..isDeleted = json['isDeleted'] as bool;
 
 Map<String, dynamic> _$HomeItemPhotoResponseToJson(
         HomeItemPhotoResponse instance) =>
@@ -65,6 +66,7 @@ Map<String, dynamic> _$HomeItemPhotoResponseToJson(
       'percentageTimeSpent': instance.percentageTimeSpent,
       'deadline': instance.deadline,
       'dateCreation': instance.dateCreation,
+      'isDeleted': instance.isDeleted,
     };
 
 AddTaskRequest _$AddTaskRequestFromJson(Map<String, dynamic> json) =>
@@ -74,7 +76,8 @@ AddTaskRequest _$AddTaskRequestFromJson(Map<String, dynamic> json) =>
       ..percentageDone = (json['percentageDone'] as num).toInt()
       ..percentageTimeSpent = (json['percentageTimeSpent'] as num).toInt()
       ..deadline = json['deadline'] as String
-      ..dateCreation = json['dateCreation'] as String;
+      ..dateCreation = json['dateCreation'] as String
+      ..isDeleted = json['isDeleted'] as bool;
 
 Map<String, dynamic> _$AddTaskRequestToJson(AddTaskRequest instance) =>
     <String, dynamic>{
@@ -84,6 +87,7 @@ Map<String, dynamic> _$AddTaskRequestToJson(AddTaskRequest instance) =>
       'percentageTimeSpent': instance.percentageTimeSpent,
       'deadline': instance.deadline,
       'dateCreation': instance.dateCreation,
+      'isDeleted': instance.isDeleted,
     };
 
 TaskDetailPhotoResponse _$TaskDetailPhotoResponseFromJson(

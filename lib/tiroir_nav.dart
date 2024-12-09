@@ -55,7 +55,7 @@ class LeTiroirState extends State<LeTiroir> {
           onTap: () {
             if(!isDisconnecting){
               //Navigator.pushNamed(   context, '/accueil', arguments: this.widget.username);
-              Navigator.push(context,MaterialPageRoute(builder: (context) => AccueilPage(username: this.widget.username)));
+              Navigator.push(context,MaterialPageRoute(builder: (context) => Accueil(username: this.widget.username)));
             }
 
             // Then close the drawer
@@ -69,7 +69,7 @@ class LeTiroirState extends State<LeTiroir> {
           onTap: () {
             if(!isDisconnecting){
               Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => CreationTachePage(username: this.widget.username),)
+                  MaterialPageRoute(builder: (context) => CreationTache(username: this.widget.username),)
               );
              // Navigator.pushNamed(context, '/creationtache', arguments: this.widget.username);
             }
