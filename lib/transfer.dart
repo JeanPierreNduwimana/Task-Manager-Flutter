@@ -55,12 +55,14 @@ class SignInResponse {
 class HomeItemPhotoResponse {
   HomeItemPhotoResponse();
 
-  int id = 0;
-  int photoId = 0;
+  String id = '';
+  String photoUrl = '';
   String name = '';
   int percentageDone = 0;
   int percentageTimeSpent = 0;
   String deadline = '';
+  String dateCreation = '';
+  bool isDeleted = false;
 
   factory HomeItemPhotoResponse.fromJson(Map<String, dynamic> json) => _$HomeItemPhotoResponseFromJson(json);
   Map<String, dynamic> toJson() => _$HomeItemPhotoResponseToJson(this);
@@ -75,6 +77,8 @@ class AddTaskRequest {
   int percentageDone = 0;
   int percentageTimeSpent = 0;
   String deadline = '';
+  String dateCreation = '';
+  bool isDeleted = false;
 
   factory AddTaskRequest.fromJson(Map<String, dynamic> json) => _$AddTaskRequestFromJson(json);
   Map<String, dynamic> toJson() => _$AddTaskRequestToJson(this);
@@ -84,12 +88,14 @@ class AddTaskRequest {
 class TaskDetailPhotoResponse {
   TaskDetailPhotoResponse();
 
-  int id = 0;
-  int photoId = 0;
+  String id = '';
+  String photoUrl = '';
+  String imageName = '';
   String name = '';
   int percentageDone = 0;
   int percentageTimeSpent = 0;
   String deadline = '';
+  String dateCreation = '';
 
   factory TaskDetailPhotoResponse.fromJson(Map<String, dynamic> json) => _$TaskDetailPhotoResponseFromJson(json);
   Map<String, dynamic> toJson() => _$TaskDetailPhotoResponseToJson(this);

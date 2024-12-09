@@ -26,28 +26,28 @@ import 'lib_http.dart';
     switch(typeDerreur)
     {
       case "InternalAuthenticationServiceException":
-        afficherMessage('${S.of(context).InternalAuthenticationServiceException} 🙅‍♀️ \nErreur: $typeDerreur', context, delaiDaffichage);
+        afficherMessage('${S.of(context).InternalAuthenticationServiceException} 🙅‍♀️', context, delaiDaffichage);
         break;
       case "BadCredentialsException":
-        afficherMessage('${S.of(context).BadCredentialsException} 🍀 \nErreur: $typeDerreur', context, delaiDaffichage);
+        afficherMessage('${S.of(context).BadCredentialsException} 🍀', context, delaiDaffichage);
         break;
       case "UsernameAlreadyTaken":
-        afficherMessage('${S.of(context).UsernameAlreadyTaken} 🙅‍ \nErreur: $typeDerreur', context, delaiDaffichage);
+        afficherMessage('${S.of(context).UsernameAlreadyTaken} 🙅‍ ', context, delaiDaffichage);
         break;
       case "UsernameTooShort":
-        afficherMessage('${S.of(context).UsernameTooShort} 🤏 \nErreur: $typeDerreur', context, delaiDaffichage);
+        afficherMessage('${S.of(context).UsernameTooShort} 🤏', context, delaiDaffichage);
         break;
       case "PasswordTooShort":
-        afficherMessage('${S.of(context).PasswordTooShort} 🤏 \nErreur: $typeDerreur', context, delaiDaffichage);
+        afficherMessage('${S.of(context).PasswordTooShort} 🤏', context, delaiDaffichage);
         break;
       case "Empty":
-        afficherMessage('${S.of(context).Empty} 🤷‍♂️ \nErreur: $typeDerreur', context, delaiDaffichage);
+        afficherMessage('${S.of(context).Empty} 🤷‍♂️', context, delaiDaffichage);
         break;
       case "Existing":
-        afficherMessage('${S.of(context).Existing} 🙅‍ \nErreur: $typeDerreur', context, delaiDaffichage);
+        afficherMessage('${S.of(context).Existing} 🙅‍', context, delaiDaffichage);
         break;
       case "TooShort":
-        afficherMessage('${S.of(context).TooShort} 🙅‍ \nErreur: $typeDerreur', context, delaiDaffichage);
+        afficherMessage('${S.of(context).TooShort} 🙅‍', context, delaiDaffichage);
         break;
       case "NoSuchElementException":
       //Aucune idéé ce que ca fait

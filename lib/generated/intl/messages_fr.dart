@@ -53,12 +53,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "create": MessageLookupByLibrary.simpleMessage("Créer"),
         "createTask": MessageLookupByLibrary.simpleMessage("Créér votre tâche"),
         "deconnexion": MessageLookupByLibrary.simpleMessage("Déconnexion"),
-        "delete": MessageLookupByLibrary.simpleMessage("Supprimer"),
         "deletedTaskMessage": m0,
         "emptyfields": MessageLookupByLibrary.simpleMessage(
             "Aucun des champs ne peut être vide ☹"),
         "errorUploadImage": MessageLookupByLibrary.simpleMessage(
             "Le serveur n\'a pas aimé cette image, essayer avec une autre et ca marchera, promis 😉"),
+        "hardDelete":
+            MessageLookupByLibrary.simpleMessage("Supprimer (Hard Delete)"),
         "home": MessageLookupByLibrary.simpleMessage("Accueil"),
         "inscription": MessageLookupByLibrary.simpleMessage("S\'inscrire"),
         "loadindTaskList":
@@ -69,6 +70,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "password": MessageLookupByLibrary.simpleMessage("Mot de passe"),
         "progression": MessageLookupByLibrary.simpleMessage("Progression"),
         "reload": MessageLookupByLibrary.simpleMessage("Recharger"),
+        "softDelete":
+            MessageLookupByLibrary.simpleMessage("Supprimer (Soft Delete)"),
         "taskDetail":
             MessageLookupByLibrary.simpleMessage("Consultation de tache"),
         "taskName": MessageLookupByLibrary.simpleMessage("Nom de la tache"),

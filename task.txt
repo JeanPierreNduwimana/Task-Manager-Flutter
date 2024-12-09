@@ -1,4 +1,2 @@
 
- --> button connecter
-   --> button desactivé
-   --> j'ecrit chargement dans le button avec icone loading
+J'etais entrain de mettre en place la suppression de photo une fois qu'elle mise en jour

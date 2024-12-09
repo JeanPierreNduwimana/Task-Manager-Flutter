@@ -170,11 +170,21 @@ class S {
     );
   }
 
-  /// `Delete`
-  String get delete {
+  /// `Soft Delete`
+  String get softDelete {
     return Intl.message(
-      'Delete',
-      name: 'delete',
+      'Soft Delete',
+      name: 'softDelete',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Hard Delete`
+  String get hardDelete {
+    return Intl.message(
+      'Hard Delete',
+      name: 'hardDelete',
       desc: '',
       args: [],
     );

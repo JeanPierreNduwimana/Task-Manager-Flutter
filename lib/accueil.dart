@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:tp1_flutter/creation_tache.dart';
 import 'tiroir_nav.dart';
@@ -9,7 +11,10 @@ import 'consultation_tache.dart';
 import 'generated/l10n.dart';
 import 'lib_http.dart';
 
-class AccueilPage extends StatelessWidget{
+FirebaseFirestore _db = FirebaseFirestore.instance;
+FirebaseAuth _auth = FirebaseAuth.instance;
+
+/*class AccueilPage extends StatelessWidget{
   final String username;
   const AccueilPage({super.key, required this.username});
   @override
@@ -29,7 +34,7 @@ class AccueilPage extends StatelessWidget{
       home: Accueil(username: username,),
     );
   }
-}
+}*/
 
 class Accueil extends StatefulWidget {
   final String username;
@@ -47,12 +52,48 @@ class AccueilState extends State<Accueil> with WidgetsBindingObserver {
   List<HomeItemPhotoResponse> taches= [];
 
   @override
-  void initState() {
+ void initState(){
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     getListTaches();
   }
+
+  Future<void> getListTaches() async{
+    setStateLoadingList(true);
+    User? user = _auth.currentUser;
+
+    try{
+      QuerySnapshot taskSnapshot = await _db.collection('users').doc(user?.uid).collection('Tasks').get();
+      if(taskSnapshot.docs.isNotEmpty){
+        for(var taskDoc in taskSnapshot.docs){
+          var taskData = taskDoc.data() as Map<String, dynamic>;
+          HomeItemPhotoResponse tache = HomeItemPhotoResponse();
+          tache.id = taskDoc.id;
+          tache.deadline = taskData['deadline'];
+          tache.name = taskData['name'];
+          tache.percentageDone = taskData['percentageDone'];
+          tache.percentageTimeSpent = taskData['percentageTimeSpent'];
+          tache.photoUrl = taskData['photoUrl'];
+          tache.dateCreation = taskData['dateCreation'];
+          tache.isDeleted = taskData['isDeleted'];
+
+          if(tache.isDeleted == false){
+            taches.add(tache);
+          }
+        }
+      }
+    }on FirebaseAuthException catch (e){
+      if(e.code == "network-request-failed"){
+        connection_error = true;
+      }
+    }finally{
+      setStateLoadingList(false);
+    }
+
+  }
+
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     // TODO: implement didChangeAppLifecycleState
@@ -67,18 +108,7 @@ class AccueilState extends State<Accueil> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     //final String username = ModalRoute.of(context)!.settings.arguments as String;
-    return MaterialApp(
-      localizationsDelegates: const [
-        S.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('en', ''), // English, no country code
-        Locale('fr', ''), // Spanish, no country code
-      ],
-      home: Scaffold(
+    return Scaffold(
         appBar: AppBar(
           title: const Text('Accueil'),
           backgroundColor: Colors.deepPurple,
@@ -91,12 +121,11 @@ class AccueilState extends State<Accueil> with WidgetsBindingObserver {
           onPressed: (){
             WidgetsBinding.instance.removeObserver(this); //On arreter l'observer
             //Navigator.pushNamed(context, '/creationtache', arguments: widget.username);
-            Navigator.push(context,MaterialPageRoute(builder: (context) => CreationTachePage( username: widget.username)));
+            Navigator.push(context,MaterialPageRoute(builder: (context) => CreationTache( username: widget.username)));
           },
           child: const Icon(Icons.add, color: Colors.white, size: 28),
         ) : const SizedBox(),
-      ),
-    );
+      );
 
 
 
@@ -122,7 +151,7 @@ class AccueilState extends State<Accueil> with WidgetsBindingObserver {
               }else{
                 WidgetsBinding.instance.removeObserver(this); //On arreter l'observer
                 //Navigator.pushNamed(context, '/creationtache', arguments: this.widget.username);
-                Navigator.push(context,MaterialPageRoute(builder: (context) => CreationTachePage( username: widget.username)));
+                Navigator.push(context,MaterialPageRoute(builder: (context) => CreationTache( username: widget.username)));
               }
             },
                 child: connection_error? Text(S.of(context).reload)
@@ -179,15 +208,17 @@ class AccueilState extends State<Accueil> with WidgetsBindingObserver {
                       ),
                     ),
                     //AFFICHAGE DE LA PHOTO SI ELLE EST DISPO
-                    (tache.photoId != 0)
+                    (tache.photoUrl != '')
                         ? Container(
+                      margin: const EdgeInsets.only(right: 12),
+
                       decoration: const BoxDecoration(
                           image: DecorationImage(
                               image: AssetImage('assets/images/tenor.gif',)
                           )
                       ),
                           child: Image.network(
-                              ImageUrl(tache.photoId),
+                              tache.photoUrl,
                               height: 80, width: 80, fit: BoxFit.cover,
                               loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress){
                                 if(loadingProgress == null){
@@ -217,25 +248,7 @@ class AccueilState extends State<Accueil> with WidgetsBindingObserver {
       );
     }
   }
-  Future<List<HomeItemPhotoResponse>> getListTaches() async{
-    setStateLoadingList(true);
-    try{
-      taches = await getHomeItemResponse();
-    }catch(e){
-      if(e is DioException){
-        if(e.type == DioExceptionType.connectionError){
-          connection_error = true;
-          erreurServeur("connectionError", context);
-          Future.delayed(const Duration(seconds: 2), (){
-            setStateLoadingList(false);});
-        }
-      }
-    }finally{
-      setStateLoadingList(false);
-      return taches;
-    }
 
-  }
 }
 
 

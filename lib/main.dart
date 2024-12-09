@@ -1,17 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:tp1_flutter/accueil.dart';
 import 'package:tp1_flutter/connexion.dart';
+import 'package:tp1_flutter/consultation_tache.dart';
 import 'package:tp1_flutter/creation_tache.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'generated/l10n.dart';
 import 'inscription.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
 
 class MyApp extends StatelessWidget {
+
   const MyApp({super.key});
 
   // This widget is the root of your application.
@@ -39,7 +47,8 @@ class MyApp extends StatelessWidget {
       home: const Connexion(),
       routes: {
         '/inscription': (context) => const InscriptionPage(),
-        '/connexion': (context) => const ConnexionPage(),
+        '/connexion': (context) => const Connexion(),
+        '/consultationTache': (context) => ConsultationTache(id: '', username: '',),
       },
     );
   }
