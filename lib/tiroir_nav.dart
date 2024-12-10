@@ -69,7 +69,7 @@ class LeTiroirState extends State<LeTiroir> {
           onTap: () {
             if(!isDisconnecting){
               Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => CreationTache(username: this.widget.username, taches: [],),)
+                  MaterialPageRoute(builder: (context) => CreationTache(username: this.widget.username,),)
               );
              // Navigator.pushNamed(context, '/creationtache', arguments: this.widget.username);
             }

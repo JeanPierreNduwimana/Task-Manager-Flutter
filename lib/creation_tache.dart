@@ -16,8 +16,7 @@ FirebaseAuth _auth = FirebaseAuth.instance;
 
 class CreationTache extends StatefulWidget {
   final String username;
-  final List<HomeItemPhotoResponse> taches;
-  const CreationTache({super.key, required this.username, required this.taches});
+  const CreationTache({super.key, required this.username});
   @override
   State<CreationTache> createState() => _CreationTacheState();
 }
@@ -165,7 +164,7 @@ class _CreationTacheState extends State<CreationTache> {
   void CreerTache(String name, String annee, String mois, String jour, String username) async{
 
 
-      if(ErreurChamps(name, annee, mois, jour)){
+      if(await ErreurChamps(name, annee, mois, jour)){
         afficherMessage(S.of(context).emptyfields, context, 3);
         _formKey.currentState!.validate();
       } else {
@@ -190,7 +189,7 @@ class _CreationTacheState extends State<CreationTache> {
 
   }
 
-  bool ErreurChamps(String name, String annee, String mois, String jour){
+  Future<bool> ErreurChamps(String name, String annee, String mois, String jour) async {
     errorannee = false; errormois = false; errorjour = false; errornom = false;
     String date = '$annee-$mois-$jour';
     DateTime inputDate = DateTime.parse(date);
@@ -212,7 +211,7 @@ class _CreationTacheState extends State<CreationTache> {
       }else if (inputDate.isBefore(todayWithoutTime)) {
       afficherMessage('date can\'t be in the past', context, 3);
         return true;
-    }else if(nomRepetitive(name.trim())){
+    }else if(await nomRepetitive(name.trim())){
       return true;
     }else{
       return false;
@@ -223,9 +222,12 @@ class _CreationTacheState extends State<CreationTache> {
     return false;
   }
 
-  bool nomRepetitive(String name){
+  Future<bool> nomRepetitive(String name) async {
+
+    List<HomeItemPhotoResponse> taches = await getListTaches();
+
     bool reponse = false;
-    widget.taches.forEach((var t){
+    taches.forEach((var t){
       if(t.name == name){
         afficherMessage("The name of the task exist already", context, 3);
         reponse = true;
@@ -235,4 +237,33 @@ class _CreationTacheState extends State<CreationTache> {
     return reponse;
   }
 
-}
+  Future<List<HomeItemPhotoResponse>> getListTaches() async{
+    User? user = _auth.currentUser;
+    List<HomeItemPhotoResponse> taches = [];
+    try{
+      QuerySnapshot taskSnapshot = await _db.collection('users').doc(user?.uid).collection('Tasks').get();
+      if(taskSnapshot.docs.isNotEmpty){
+        for(var taskDoc in taskSnapshot.docs){
+          var taskData = taskDoc.data() as Map<String, dynamic>;
+          HomeItemPhotoResponse tache = HomeItemPhotoResponse();
+          tache.id = taskDoc.id;
+          tache.deadline = taskData['deadline'];
+          tache.name = taskData['name'];
+          tache.percentageDone = taskData['percentageDone'];
+          tache.percentageTimeSpent = taskData['percentageTimeSpent'];
+          tache.photoUrl = taskData['photoUrl'];
+          tache.dateCreation = taskData['dateCreation'];
+          tache.isDeleted = taskData['isDeleted'];
+          taches.add(tache);
+        }
+      }
+    }on FirebaseAuthException catch (e){
+      if(e.code == "network-request-failed"){
+        connection_error = true;
+      }
+
+  }
+
+  return taches;
+
+}}

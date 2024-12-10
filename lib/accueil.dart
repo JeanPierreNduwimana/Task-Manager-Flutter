@@ -99,7 +99,7 @@ class AccueilState extends State<Accueil> with WidgetsBindingObserver {
           onPressed: (){
             WidgetsBinding.instance.removeObserver(this); //On arreter l'observer
             //Navigator.pushNamed(context, '/creationtache', arguments: widget.username);
-            Navigator.push(context,MaterialPageRoute(builder: (context) => CreationTache( username: widget.username, taches: taches,)));
+            Navigator.push(context,MaterialPageRoute(builder: (context) => CreationTache( username: widget.username)));
           },
           child: const Icon(Icons.add, color: Colors.white, size: 28),
         ) : const SizedBox(),
@@ -129,7 +129,7 @@ class AccueilState extends State<Accueil> with WidgetsBindingObserver {
               }else{
                 WidgetsBinding.instance.removeObserver(this); //On arreter l'observer
                 //Navigator.pushNamed(context, '/creationtache', arguments: this.widget.username);
-                Navigator.push(context,MaterialPageRoute(builder: (context) => CreationTache( username: widget.username, taches: taches,)));
+                Navigator.push(context,MaterialPageRoute(builder: (context) => CreationTache( username: widget.username,)));
               }
             },
                 child: connection_error? Text(S.of(context).reload)
