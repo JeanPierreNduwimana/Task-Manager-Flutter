@@ -95,11 +95,12 @@ flutter pub add google_sign_in
 flutter pub get
 ## Generer le SHA-1 
 
-Dans le terminal, aller sur le path du dossier android du projet C:\Users\<VotreNomUtilisateur>\.android\debug.keystore,
-puis executer cette comande:
-gradlew signingReport
+Dans le terminal du android studio, aller sur le path du dossier android du projet, puis executer cette comande:
+./gradlew signingReport
+Exemple: PS C:\Users\1783527\Desktop\TP1_Flutter\android> ./gradlew signingReport
+
 Ca generera le SHA-1, puis,
-Allez dans Project Settings → General → Your Apps → Add Fingerprint.
+Allez sur firebase dans parametres du projet → selectionne l'application android → AJouter une empreinte.
 Ajoutez le SHA-1 que vous avez généré.
 
 # Créer une base de données Cloud Firestore

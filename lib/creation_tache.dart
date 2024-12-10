@@ -16,7 +16,8 @@ FirebaseAuth _auth = FirebaseAuth.instance;
 
 class CreationTache extends StatefulWidget {
   final String username;
-  const CreationTache({super.key, required this.username});
+  final List<HomeItemPhotoResponse> taches;
+  const CreationTache({super.key, required this.username, required this.taches});
   @override
   State<CreationTache> createState() => _CreationTacheState();
 }
@@ -163,11 +164,11 @@ class _CreationTacheState extends State<CreationTache> {
 
   void CreerTache(String name, String annee, String mois, String jour, String username) async{
 
+
       if(ErreurChamps(name, annee, mois, jour)){
         afficherMessage(S.of(context).emptyfields, context, 3);
         _formKey.currentState!.validate();
-      }else {
-
+      } else {
         String date = '$annee-$mois-$jour';
         User? user = _auth.currentUser;
         CollectionReference tasks = _db.collection('users').doc(user?.uid).collection('Tasks');
@@ -191,6 +192,11 @@ class _CreationTacheState extends State<CreationTache> {
 
   bool ErreurChamps(String name, String annee, String mois, String jour){
     errorannee = false; errormois = false; errorjour = false; errornom = false;
+    String date = '$annee-$mois-$jour';
+    DateTime inputDate = DateTime.parse(date);
+    DateTime today = DateTime.now();
+    DateTime todayWithoutTime = DateTime(today.year, today.month, today.day);
+
     if(annee == ''){
         errorannee = true;
         return true;
@@ -200,13 +206,33 @@ class _CreationTacheState extends State<CreationTache> {
       }else if(jour == ''){
         errorjour = true;
         return true;
-      } else if(name == '') {
+      } else if(name.trim() == '') {
         errornom = true;
         return true;
+      }else if (inputDate.isBefore(todayWithoutTime)) {
+      afficherMessage('date can\'t be in the past', context, 3);
+        return true;
+    }else if(nomRepetitive(name.trim())){
+      return true;
+    }else{
+      return false;
+    }
+
+
+
+    return false;
+  }
+
+  bool nomRepetitive(String name){
+    bool reponse = false;
+    widget.taches.forEach((var t){
+      if(t.name == name){
+        afficherMessage("The name of the task exist already", context, 3);
+        reponse = true;
       }
-      else {
-        return false;
-      }
+    });
+
+    return reponse;
   }
 
 }

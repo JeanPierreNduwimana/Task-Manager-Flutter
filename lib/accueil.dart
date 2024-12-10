@@ -14,28 +14,6 @@ import 'lib_http.dart';
 FirebaseFirestore _db = FirebaseFirestore.instance;
 FirebaseAuth _auth = FirebaseAuth.instance;
 
-/*class AccueilPage extends StatelessWidget{
-  final String username;
-  const AccueilPage({super.key, required this.username});
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    return MaterialApp(
-      localizationsDelegates: const [
-        S.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('en', ''), // English, no country code
-        Locale('fr', ''), // Spanish, no country code
-      ],
-      home: Accueil(username: username,),
-    );
-  }
-}*/
-
 class Accueil extends StatefulWidget {
   final String username;
   const Accueil({super.key,required this.username});
@@ -121,7 +99,7 @@ class AccueilState extends State<Accueil> with WidgetsBindingObserver {
           onPressed: (){
             WidgetsBinding.instance.removeObserver(this); //On arreter l'observer
             //Navigator.pushNamed(context, '/creationtache', arguments: widget.username);
-            Navigator.push(context,MaterialPageRoute(builder: (context) => CreationTache( username: widget.username)));
+            Navigator.push(context,MaterialPageRoute(builder: (context) => CreationTache( username: widget.username, taches: taches,)));
           },
           child: const Icon(Icons.add, color: Colors.white, size: 28),
         ) : const SizedBox(),
@@ -151,7 +129,7 @@ class AccueilState extends State<Accueil> with WidgetsBindingObserver {
               }else{
                 WidgetsBinding.instance.removeObserver(this); //On arreter l'observer
                 //Navigator.pushNamed(context, '/creationtache', arguments: this.widget.username);
-                Navigator.push(context,MaterialPageRoute(builder: (context) => CreationTache( username: widget.username)));
+                Navigator.push(context,MaterialPageRoute(builder: (context) => CreationTache( username: widget.username, taches: taches,)));
               }
             },
                 child: connection_error? Text(S.of(context).reload)
