@@ -1,8 +1,37 @@
 # TP1_Flutter
 
+configurer le http:
+
+- dio:
+    - flutter pub addcm dio
+- json_annotation
+    - flutter pub add json_annotation
+- dio_cookie_manager
+    - flutter pub add dio_cookie_manager
+- build runner
+    - dart pub add dev:build_runner
+- json_serializable
+    - flutter pub add json_serializable
+- créer un fichier libhttp. voir au tp flutter pour exemple
+- créer un fichier transfer.dart
+    ex:
+ ` @JsonSerializable()
+class SignUpRequest {
+
+  SignUpRequest();
+
+  String username = '';
+  String password = '';
+
+  factory SignUpRequest.fromJson(Map<String, dynamic> json) => _$SignUpRequestFromJson(json);
+  Map<String, dynamic> toJson() => _$SignUpRequestToJson(this);
+  } `
+
+- dart run build_runner build --delete-conflicting-outputs //code qui genere le fichier transfert.g.dart
+
 https://www.youtube.com/watch?v=cukpZ2ORbsI //tutoriel prof
 https://docs.flutter.dev/data-and-backend/serialization/json //site du code qui genere le fichier de transfer
-dart run build_runner build --delete-conflicting-outputs //code qui genere le fichier transfert.g.dart
+
 
 https://www.macincloud.com/
 
