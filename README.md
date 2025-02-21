@@ -13,7 +13,7 @@ configurer le http:
 - json_serializable
     - flutter pub add json_serializable
 - créer un fichier libhttp. voir au tp flutter pour exemple
-- créer un fichier transfer.dart
+- créer un fichier transfer.dart en ajoutant deux importations : import 'package:json_annotation/json_annotation.dart' & part 'transfer.g.dart';
     ex:
  ` @JsonSerializable()
 class SignUpRequest {
